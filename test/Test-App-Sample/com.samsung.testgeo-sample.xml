@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" package="com.samsung.testgeo-sample" version="0.1.7">
+	<label>TestGeo Sample</label>
+	<author email="varun.kr7@samsung.com" href="www.samsung.com">Varun Kumar</author>
+	<description>TestGeo Sample Application</description>
+	<ui-application appid="com.samsung.testgeo-sample" exec="/usr/apps/com.samsung.testgeo-sample/bin/testgeo-sample" multiple="false" nodisplay="false" 		taskmanage="true" type="capp" mainapp="true" indicatordisplay="false" process-pool="true" hw-acceleration="use-GL">
+		<label>TestGeo Sample</label>
+		<icon>com.samsung.testgeo-sample.png</icon>
+	</ui-application>
+	<privileges>
+		<privilege>http://tizen.org/privilege/location</privilege>
+	</privileges>
+</manifest>

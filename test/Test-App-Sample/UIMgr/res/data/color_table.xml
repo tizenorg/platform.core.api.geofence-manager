@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ChangeableColorTable>
+	<Theme style="Light">
+		<ChangeableColorInfo id="AO002" inputColor="1" hue="0" saturation="-1" value="3" alpha="100" />
+		<ChangeableColorInfo id="AO003" inputColor="1" hue="0" saturation="0" value="0" alpha="60" />
+		<ChangeableColorInfo id="AO004" inputColor="1" hue="21" saturation="-3" value="-5" alpha="100" />
+		<ChangeableColorInfo id="AO005" inputColor="" hue="0" saturation="85" value="88" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO001" inputColor="" hue="0" saturation="0" value="3" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO002" inputColor="" hue="0" saturation="0" value="30" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO003" inputColor="1" hue="0" saturation="0" value="0" alpha="100" />
+		<ChangeableColorInfo id="ATO006" inputColor="1" hue="0" saturation="0" value="0" alpha="100" />
+	</Theme>
+	<Theme style="Dark¡±>
+		<ChangeableColorInfo id="AO002" inputColor="1" hue="0" saturation="-1" value="3" alpha="100" />
+		<ChangeableColorInfo id="AO003" inputColor="1" hue="0" saturation="0" value="0" alpha="60" />
+		<ChangeableColorInfo id="AO004" inputColor="1" hue="21" saturation="-3" value="-5" alpha="100" />
+		<ChangeableColorInfo id="AO005" inputColor="" hue="0" saturation="85" value="88" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO001" inputColor="" hue="0" saturation="0" value="0" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO002" inputColor="" hue="0" saturation="0" value="30" alpha="100" fixedHue=¡±true" fixedSaturation=¡±true¡± fixedValue=¡±true¡±/>
+		<ChangeableColorInfo id="ATO003" inputColor="1" hue="0" saturation="0" value="0" alpha="100" />
+		<ChangeableColorInfo id="ATO006" inputColor="1" hue="0" saturation="0" value="0" alpha="100" />
+	</Theme>
+</ChangeableColorTable>

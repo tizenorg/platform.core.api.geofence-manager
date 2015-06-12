@@ -1,0 +1,17 @@
+<manifest>
+	<define>
+		<domain name="com.samsung.testgeo-sample" policy="shared" />
+	</define>
+	<assign>
+		<filesystem path="/usr/share/icons/default/small/*" label="_"/>
+		<filesystem path="/usr/share/applications/com.samsung.testgeo-sample.desktop" label="_"/>
+		<filesystem path="/usr/ug/lib/*" label="_" />
+		<filesystem path="/usr/ug/res/*" label="_" />
+		<filesystem path="/usr/ug/bin/*" label="_" exec_label="_" />
+		<filesystem path="/usr/apps/com.samsung.testgeo-sample/author-signature.xml" label="_"/>
+		<filesystem path="/usr/apps/com.samsung.testgeo-sample/signature1.xml" label="_"/>
+	</assign>
+	<request>
+		<domain name="com.samsung.testgeo-sample"/>
+	</request>
+</manifest>

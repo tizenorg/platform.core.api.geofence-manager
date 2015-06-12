@@ -1,0 +1,246 @@
+/* Copyright 2014 Samsung Electronics Co., Ltd All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include <glib.h>
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include "geofence-log.h"
+#include "geofence-module.h"
+#include "module-internal.h"
+
+#define MAX_MODULE_INDEX 4
+const char *MODULE_PATH_PREFIX = "/usr/lib/geofence/module";
+
+static GMod *gmod_new(const char *module_name, gboolean is_resident)
+{
+	if (!module_name)
+		return NULL;
+
+	GMod *gmod = g_new0(GMod, 1);
+	gmod->name = g_strdup(module_name);
+	if (!gmod->name) {
+		g_free(gmod);
+		return NULL;
+	}
+	gmod->path = g_module_build_path(MODULE_PATH_PREFIX, gmod->name);
+
+	/* shlg 20141016 */
+	/* gmod->path = g_strdup("/usr/lib/geofence/module/libgeofence.so"); */
+
+	if (!gmod->path) {
+		g_free(gmod->name);
+		g_free(gmod);
+		return NULL;
+	}
+	gmod->module = g_module_open(gmod->path, G_MODULE_BIND_LAZY);
+	if (!gmod->module) {
+		g_free(gmod->name);
+		g_free(gmod->path);
+		g_free(gmod);
+		return NULL;
+	}
+	if (is_resident)
+		g_module_make_resident(gmod->module);
+
+	return gmod;
+}
+
+static void gmod_free(GMod *gmod)
+{
+	if (gmod->name)
+		g_free(gmod->name);
+	if (gmod->path)
+		g_free(gmod->path);
+	if (gmod->module)
+		g_module_close(gmod->module);
+	g_free(gmod);
+}
+
+static gboolean gmod_find_sym(GMod *gmod, gpointer *init_func, gpointer *shutdown_func)
+{
+	char sym[256];
+	g_stpcpy(sym, "init");
+	if (!g_module_symbol(gmod->module, sym, init_func)) {
+		GEOFENCE_LOGW("symbol not found: %s", sym);
+		return FALSE;
+	}
+	g_stpcpy(sym, "shutdown");
+	if (!g_module_symbol(gmod->module, sym, shutdown_func)) {
+		GEOFENCE_LOGW("symbol not found: %s", sym);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+static gpointer mod_new(const char *module_name)
+{
+	gpointer ret_mod = NULL;
+	if (!module_name)
+		return NULL;
+
+	GMod *gmod = NULL;
+	gpointer init = NULL;
+	gpointer shutdown = NULL;
+	gmod = gmod_new(module_name, TRUE);
+	if (!gmod) {
+		GEOFENCE_LOGW("module(%s) new failed", module_name);
+		return NULL;
+	}
+	if (!gmod_find_sym(gmod, &init, &shutdown)) {
+		GEOFENCE_LOGW("symbol (init, shutdown) finding failed");
+		gmod_free(gmod);
+		return NULL;
+	}
+	if (!init || !shutdown) {
+		GEOFENCE_LOGW("init, shutdown symbol is NULL");
+		gmod_free(gmod);
+		return NULL;
+	}
+	if (g_str_has_prefix(module_name, "geofence")) {
+		GeofenceInternalMod *_mod = g_new0(GeofenceInternalMod, 1);
+		_mod->gmod = gmod;
+		_mod->init = init;
+		_mod->shutdown = shutdown;
+		_mod->handler = _mod->init(&(_mod->ops));
+		if (!_mod->handler) {
+			GEOFENCE_LOGW("module init failed");
+			gmod_free(_mod->gmod);
+			ret_mod = NULL;
+		} else
+			ret_mod = (gpointer) _mod;
+	} else {
+		GEOFENCE_LOGW("module name (%s) is wrong", module_name);
+		ret_mod = NULL;
+	}
+	return ret_mod;
+}
+
+static void mod_free(gpointer mod, const char *module_name)
+{
+	if (!mod || !module_name)
+		return;
+
+	if (0 == g_strcmp0(module_name, "geofence")) {
+		GeofenceInternalMod *_mod = (GeofenceInternalMod *) mod;
+		if (_mod->shutdown && _mod->handler) {
+			_mod->shutdown(_mod->handler);
+		}
+		_mod->handler = NULL;
+		_mod->init = NULL;
+		_mod->shutdown = NULL;
+		gmod_free(_mod->gmod);
+		_mod->gmod = NULL;
+	} else
+		GEOFENCE_LOGW("module name (%s) is wrong", module_name);
+
+	g_free(mod);
+}
+
+static gboolean mod_is_supported(const char *module_name)
+{
+	GMod *gmod = NULL;
+	gmod = gmod_new(module_name, FALSE);
+	if (!gmod) {
+		return FALSE;
+	}
+	gmod_free(gmod);
+
+	return TRUE;
+}
+
+gboolean module_init(void)
+{
+	if (!g_module_supported()) {
+		GEOFENCE_LOGW("module is not supported");
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void module_free(gpointer mod, const char *module_name)
+{
+	if (!mod || !module_name)
+		return;
+	mod_free(mod, module_name);
+}
+
+gpointer module_new(const char *module_name)
+{
+	if (!module_name)
+		return NULL;
+
+	char name[256];
+
+	gpointer mod = NULL;
+	if (0 >= g_snprintf(name, 256, "%s", module_name)) {
+		GEOFENCE_LOGW("module name(%s) is wrong", name);
+	}
+	mod = mod_new(name);
+	if (mod) {
+		GEOFENCE_LOGW("module (%s) open success", name);
+	} else {
+		GEOFENCE_LOGW("module (%s) open failed", name);
+	}
+	return mod;
+}
+
+gboolean module_is_supported(const char *module_name)
+{
+	if (!module_name)
+		return FALSE;
+
+	int index = 0;
+	gboolean ret = FALSE;
+	gboolean found = FALSE;
+
+	char name[256] = { 0, };
+
+	for (index = -1; index < MAX_MODULE_INDEX; index++) {
+		if (index >= 0) {
+			g_snprintf(name, 256, "%s%d", module_name, index);
+		} else {
+			g_snprintf(name, 256, "%s", module_name);
+		}
+
+		ret = mod_is_supported(name);
+		if (ret == TRUE) {
+			found = TRUE;
+			GEOFENCE_LOGW("module name(%s) is found", name);
+			break;
+		}
+	}
+
+	return found;
+}
+
+gchar *mod_get_realpath(const gchar * module_name)
+{
+	gchar link_path[PATH_MAX] = { 0, };
+	gchar *path = NULL;
+
+	snprintf(link_path, PATH_MAX, "%s/lib%s.so", MODULE_PATH_PREFIX, module_name);
+	if (strlen(link_path) == 0) {
+		GEOFENCE_LOGE("Fail to get real path of [%s]", module_name);
+		return NULL;
+	}
+
+	path = strrchr(link_path, '/');
+	if (!path)
+		return NULL;
+
+	return g_strdup(path);
+}
