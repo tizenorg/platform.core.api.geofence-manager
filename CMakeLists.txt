@@ -7,6 +7,7 @@ PROJECT(${fw_name})
 SET(CMAKE_INSTALL_PREFIX /usr)
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(LIBDIR ${LIBDIR})
+SET(LIB_PATH ${LIBDIR}/geofence/module)
 
 SET(INC_DIR
     include
@@ -22,6 +23,7 @@ SET(pc_dependents "capi-base-common")
 IF(ENABLE_GEOFENCE)
 	ADD_DEFINITIONS(-DENABLE_GEOFENCE)
 ENDIF(ENABLE_GEOFENCE)
+ADD_DEFINITIONS("-DMODULE_PATH_PREFIX=\"${LIB_PATH}\"")
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(${fw_name} REQUIRED ${dependents})
