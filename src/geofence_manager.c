@@ -208,7 +208,9 @@ static bool __is_fence_started(int fence_id)
 EXPORT_API int geofence_manager_is_supported(bool *supported)
 {
 	GEOFENCE_LOGD("geofence_manager_is_supported");
-
+#ifndef ENABLE_GEOFENCE
+	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+#endif
 	GEOFENCE_NULL_ARG_CHECK(supported);
 
 	*supported = geofence_is_supported();
