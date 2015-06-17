@@ -23,7 +23,6 @@
 #include "module-internal.h"
 
 #define MAX_MODULE_INDEX 4
-const char *MODULE_PATH_PREFIX = "/usr/lib/geofence/module";
 
 static GMod *gmod_new(const char *module_name, gboolean is_resident)
 {

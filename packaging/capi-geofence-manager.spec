@@ -12,6 +12,7 @@ ExcludeArch: %{arm} %ix86 x86_64
 %endif
 
 BuildRequires:  cmake
+#BuildRequires:  model-build-features
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:  pkgconfig(vconf)
@@ -26,11 +27,10 @@ Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
 %description
-
+A Geofence Manager library in Tizen Native API
 
 %prep
 %setup -q
-
 
 %build
 export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
@@ -65,6 +65,7 @@ Group:    Location/API
 Requires: %{name} = %{version}-%{release}
 
 %description devel
+A Geofence Manager library in Tizen Native API (Development)
 
 
 %files devel
