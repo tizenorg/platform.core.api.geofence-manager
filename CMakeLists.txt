@@ -6,14 +6,13 @@ PROJECT(${fw_name})
 
 SET(CMAKE_INSTALL_PREFIX /usr)
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
-SET(LIBDIR ${LIBDIR})
-SET(LIB_PATH ${LIBDIR}/geofence/module)
+SET(MODULE_PATH ${LIBDIR}/geofence/module)
 
 SET(INC_DIR
     include
     src
     src/manager
-    src/module
+    src/manager/include
     )
 INCLUDE_DIRECTORIES(${INC_DIR})
 
@@ -23,7 +22,7 @@ SET(pc_dependents "capi-base-common")
 IF(ENABLE_GEOFENCE)
 	ADD_DEFINITIONS(-DENABLE_GEOFENCE)
 ENDIF(ENABLE_GEOFENCE)
-ADD_DEFINITIONS("-DMODULE_PATH_PREFIX=\"${LIB_PATH}\"")
+ADD_DEFINITIONS("-DMODULE_PATH_PREFIX=\"${MODULE_PATH}\"")
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(${fw_name} REQUIRED ${dependents})
@@ -31,7 +30,7 @@ FOREACH(flag ${${fw_name}_CFLAGS})
     SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
 ENDFOREACH(flag)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fvisibility=hidden -fPIC -Wall -Werror")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fvisibility=hidden -fPIC -Werror")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 IF("${ARCH}" STREQUAL "arm")
@@ -49,13 +48,9 @@ SET(API_SRCS
     src/geofence_manager.c
 )
 
-SET(MODULE_SRCS
-    src/module/module-internal.c
-)
-
 aux_source_directory(src/manager MANAGER_SRCS)
 
-ADD_LIBRARY(${fw_name} SHARED ${API_SRCS} ${MANAGER_SRCS} ${MODULE_SRCS})
+ADD_LIBRARY(${fw_name} SHARED ${API_SRCS} ${MANAGER_SRCS})
 
 IF (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/manager/geofence-marshal.c)
     MESSAGE ("")
@@ -88,8 +83,8 @@ SET_TARGET_PROPERTIES(${fw_name}
 TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS})
 
 INSTALL(TARGETS ${fw_name} DESTINATION ${LIBDIR})
-INSTALL(DIRECTORY include/ DESTINATION include/geofence
-        PATTERN "*.h")
+INSTALL(DIRECTORY include/ DESTINATION include/geofence PATTERN "*.h")
+INSTALL(DIRECTORY src/manager/include/ DESTINATION include/geofence PATTERN "*.h")
 
 SET(PC_NAME ${fw_name})
 SET(PC_REQUIRED ${pc_dependents})

@@ -58,6 +58,7 @@ typedef void(*geofence_state_changed_cb)(int geofence_id, geofence_state_e state
  * @see geofence_manager_set_geofence_state_changed_cb()
  */
 typedef void(*geofence_event_cb)(int place_id, int geofence_id, geofence_manager_error_e error, geofence_manage_e manage, void *user_data);
+
 /**
  * @brief Called when the fence list is requested.
  * @since_tizen 2.4
@@ -73,7 +74,6 @@ typedef void(*geofence_event_cb)(int place_id, int geofence_id, geofence_manager
  * @see geofence_manager_add()
  */
 typedef bool(*geofence_manager_fence_cb)(int geofence_id, geofence_h fence, int fence_index, int fence_cnt, void *user_data);
-
 
 /**
  * @brief Called when the place list is requested.
@@ -101,7 +101,6 @@ typedef bool(*geofence_manager_place_cb)(int place_id, const char *place_name, i
  */
 int geofence_manager_is_supported(bool *supported);
 
-
 /**
  * @brief Creates a new geofence manager.
  * @since_tizen 2.4
@@ -118,8 +117,7 @@ int geofence_manager_is_supported(bool *supported);
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION	Exception occurred
  * @see geofence_manager_destroy()
  */
-int geofence_manager_create(geofence_manager_h* manager);
-
+int geofence_manager_create(geofence_manager_h *manager);
 
 /**
  * @brief Releases the geofence manager.
@@ -137,7 +135,6 @@ int geofence_manager_create(geofence_manager_h* manager);
  * @see geofence_manager_stop()
 */
 int geofence_manager_destroy(geofence_manager_h manager);
-
 
 /**
  * @brief Starts the geofencing service.
@@ -164,7 +161,6 @@ int geofence_manager_destroy(geofence_manager_h manager);
  * @see geofence_manager_set_geofence_state_changed_cb()
  */
 int geofence_manager_start(geofence_manager_h manager, int geofence_id);
-
 
 /**
  * @brief Stops the geofenceing service.
@@ -206,7 +202,6 @@ int geofence_manager_stop(geofence_manager_h manager, int geofence_id);
  */
 int geofence_manager_add_place(geofence_manager_h manager, const char *place_name, int *place_id);
 
-
 /**
  * @brief Updates the place name of a given place id.
  * @since_tizen 2.4
@@ -225,7 +220,6 @@ int geofence_manager_add_place(geofence_manager_h manager, const char *place_nam
  * @see   geofence_manager_remove_place()
  */
 int geofence_manager_update_place(geofence_manager_h manager, int place_id, const char *place_name);
-
 
 /**
  * @brief Removes the specific place for geofencing service.
@@ -247,7 +241,6 @@ int geofence_manager_update_place(geofence_manager_h manager, int place_id, cons
  */
 int geofence_manager_remove_place(geofence_manager_h manager, int place_id);
 
-
 /**
  * @brief Adds a geofence for a given geofence manager.
  * @since_tizen 2.4
@@ -268,8 +261,7 @@ int geofence_manager_remove_place(geofence_manager_h manager, int place_id);
  * @see geofence_create_wifi()
  * @see geofence_manager_start()
  */
-int geofence_manager_add_fence(geofence_manager_h manager, const geofence_h fence, int* geofence_id);
-
+int geofence_manager_add_fence(geofence_manager_h manager, const geofence_h fence, int *geofence_id);
 
 /**
  * @brief Removes a geofence with a given geofence id
@@ -289,7 +281,6 @@ int geofence_manager_add_fence(geofence_manager_h manager, const geofence_h fenc
  * @see geofence_manager_add_fence()
  */
 int geofence_manager_remove_fence(geofence_manager_h manager, int geofence_id);
-
 
 /**
  * @brief Registers a callback function to be invoked when a device enters or exits the specific geofence.
@@ -400,7 +391,6 @@ int geofence_manager_foreach_place_geofence_list(geofence_manager_h manager, int
  */
 int geofence_manager_foreach_place_list(geofence_manager_h manager, geofence_manager_place_cb callback, void *user_data);
 
-
 /**
  * @brief Gets the name of place.
  * @since_tizen 2.4
@@ -421,7 +411,6 @@ int geofence_manager_foreach_place_list(geofence_manager_h manager, geofence_man
  * @see geofence_manager_update_place()
  */
 int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, char **place_name);
-
 
 /**
  * @}
@@ -454,8 +443,7 @@ int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, ch
  * @see geofence_create_wifi()
  * @see geofence_destroy()
  */
-int geofence_create_geopoint(int place_id, double latitude, double longitude, int radius, const char* address, geofence_h* fence);
-
+int geofence_create_geopoint(int place_id, double latitude, double longitude, int radius, const char *address, geofence_h *fence);
 
 /**
  * @brief Creates a bluetooth type of new geofence.
@@ -476,8 +464,7 @@ int geofence_create_geopoint(int place_id, double latitude, double longitude, in
  * @see geofence_create_wifi()
  * @see geofence_destroy()
  */
-int geofence_create_bluetooth(int place_id, const char* bssid, const char* ssid, geofence_h* fence);
-
+int geofence_create_bluetooth(int place_id, const char *bssid, const char *ssid, geofence_h *fence);
 
 /**
  * @brief Creates a Wi-Fi type of new geofence.
@@ -498,8 +485,7 @@ int geofence_create_bluetooth(int place_id, const char* bssid, const char* ssid,
  * @see geofence_create_bluetooth()
  * @see geofence_destroy()
  */
-int geofence_create_wifi(int place_id, const char* bssid, const char* ssid, geofence_h* fence);
-
+int geofence_create_wifi(int place_id, const char *bssid, const char *ssid, geofence_h *fence);
 
 /**
  * @brief Releases the geofence.
@@ -516,7 +502,6 @@ int geofence_create_wifi(int place_id, const char* bssid, const char* ssid, geof
  */
 int geofence_destroy(geofence_h fence);
 
-
 /**
  * @brief Gets the type of geofence.
  * @since_tizen 2.4
@@ -531,7 +516,6 @@ int geofence_destroy(geofence_h fence);
  */
 int geofence_get_type(geofence_h fence, geofence_type_e *type);
 
-
 /**
  * @brief Gets the id of place.
  * @since_tizen 2.4
@@ -545,7 +529,6 @@ int geofence_get_type(geofence_h fence, geofence_type_e *type);
  * @see geofence_create_wifi()
  */
 int geofence_get_place_id(geofence_h fence, int *place_id);
-
 
 /**
  * @brief Gets the latitude of geofence.
@@ -563,7 +546,6 @@ int geofence_get_place_id(geofence_h fence, int *place_id);
  * @see geofence_create_geopoint()
  */
 int geofence_get_latitude(geofence_h fence, double *latitude);
-
 
 /**
  * @brief Gets the longitude of geofence.
@@ -600,7 +582,6 @@ int geofence_get_longitude(geofence_h fence, double *longitude);
  */
 int geofence_get_radius(geofence_h fence, int *radius);
 
-
 /**
  * @brief Gets the address of geofence
  * @since_tizen 2.4
@@ -618,7 +599,6 @@ int geofence_get_radius(geofence_h fence, int *radius);
  */
 int geofence_get_address(geofence_h fence, char **address);
 
-
 /**
  * @brief Gets the bssid of geofence
  * @since_tizen 2.4
@@ -635,7 +615,6 @@ int geofence_get_address(geofence_h fence, char **address);
  */
 int geofence_get_bssid(geofence_h fence, char **bssid);
 
-
 /**
  * @brief Gets the ssid of geofence
  * @since_tizen 2.4
@@ -651,7 +630,6 @@ int geofence_get_bssid(geofence_h fence, char **bssid);
  * @see geofence_get_bssid()
  */
 int geofence_get_ssid(geofence_h fence, char **ssid);
-
 
 /**
  * @brief Returns The geofence status of specified geofence.
@@ -670,7 +648,6 @@ int geofence_get_ssid(geofence_h fence, char **ssid);
  */
 int geofence_status_create(int geofence_id, geofence_status_h *status);
 
-
 /**
  * @brief Releases the memory, used by the status data.
  * @since_tizen 2.4
@@ -684,7 +661,6 @@ int geofence_status_create(int geofence_id, geofence_status_h *status);
  */
 int geofence_status_destroy(geofence_status_h status);
 
-
 /**
  * @brief Gets the state of geofence.
  * @since_tizen 2.4
@@ -697,7 +673,6 @@ int geofence_status_destroy(geofence_status_h status);
  */
 int geofence_status_get_state(geofence_status_h status, geofence_state_e *state);
 
-
 /**
  * @brief Gets the amount of seconds geofence is in the current state.
  * @since_tizen 2.4
@@ -709,7 +684,6 @@ int geofence_status_get_state(geofence_status_h status, geofence_state_e *state)
  * @see geofence_status_get_state()
  */
 int geofence_status_get_duration(geofence_status_h status, int *seconds);
-
 
 /**
  * @}

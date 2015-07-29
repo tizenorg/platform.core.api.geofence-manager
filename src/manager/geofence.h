@@ -50,7 +50,7 @@ G_BEGIN_DECLS
  *
  * @see None.
  */
-int geofence_init (void);
+int geofence_init(void);
 
 /**
  * @brief
@@ -66,7 +66,7 @@ int geofence_init (void);
  * @retval NULL              if error occured
  * @see geofence_free
  */
-GeofenceObject *geofence_new (void);
+GeofenceObject *geofence_new(void);
 
 /**
  * @brief
@@ -86,7 +86,7 @@ GeofenceObject *geofence_new (void);
 
  * @endcode
  */
-int geofence_free (GeofenceObject *obj);
+int geofence_free(GeofenceObject *obj);
 
 /**
  * @brief
@@ -103,7 +103,7 @@ int geofence_free (GeofenceObject *obj);
  * @code
  * @endcode
  */
-gboolean geofence_is_supported (void);
+gboolean geofence_is_supported(void);
 
 G_END_DECLS
 

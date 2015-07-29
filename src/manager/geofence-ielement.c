@@ -17,7 +17,7 @@
 #include "geofence-ielement.h"
 
 static void _glib_log(const gchar *log_domain, GLogLevelFlags log_level,
-		const gchar *msg, gpointer user_data)
+                      const gchar *msg, gpointer user_data)
 {
 
 	GEOFENCE_LOGD("GLIB[%d] : %s", log_level, msg);
@@ -26,21 +26,21 @@ static void _glib_log(const gchar *log_domain, GLogLevelFlags log_level,
 
 GType geofence_ielement_get_type(void)
 {
-	g_log_set_default_handler (_glib_log, NULL);
+	g_log_set_default_handler(_glib_log, NULL);
 
 	static GType iface_type = 0;
 
 	if (!iface_type) {
 		static const GTypeInfo info = {
-			sizeof(GeofenceIElementInterface),			/* class_size */
+			sizeof(GeofenceIElementInterface),	/* class_size */
 			NULL, 				/* base_init */
-			NULL 										/* base_finalize */
+			NULL 				/* base_finalize */
 		};
 
-		iface_type = g_type_register_static(G_TYPE_INTERFACE, 		/* parent-type */
-			"GeofenceIElement", 									/* *type name */
-			&info, 													/* *info* */
-			0);														/* flags */
+		iface_type = g_type_register_static(G_TYPE_INTERFACE, 	/* parent-type */
+		                                    "GeofenceIElement", /* type name */
+		                                    &info, 				/* info */
+		                                    0);					/* flags */
 	}
 
 	return iface_type;

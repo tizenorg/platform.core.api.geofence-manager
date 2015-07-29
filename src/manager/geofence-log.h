@@ -33,20 +33,20 @@
 #define GEOFENCE_LOGE(fmt,args...) LOGE(fmt, ##args)
 
 #define GEOFENCE_CHECK_CONDITION(condition, error, msg)	\
-		do { \
-			if (condition) { \
-			} else { \
-				GEOFENCE_LOGE("%s(0x%08x)", msg, error); \
-				return error; \
-			} \
-		} while (0)
+	do { \
+		if (condition) { \
+		} else { \
+			GEOFENCE_LOGE("%s(0x%08x)", msg, error); \
+			return error; \
+		} \
+	} while (0)
 
 
 #define GEOFENCE_PRINT_ERROR_CODE(error, msg)	\
-		do { \
-			GEOFENCE_LOGE("%s(0x%08x)", msg, error); \
-			return error; \
-		} while (0)
+	do { \
+		GEOFENCE_LOGE("%s(0x%08x)", msg, error); \
+		return error; \
+	} while (0)
 
 
 #ifdef __cplusplus
@@ -56,7 +56,7 @@ extern "C" {
 
 #define GEOFENCE_NULL_ARG_CHECK(arg)	\
 	GEOFENCE_CHECK_CONDITION((arg != NULL),GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER,"GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER") \
-
+	 
 int __print_error_code(int code);
 
 
@@ -64,4 +64,4 @@ int __print_error_code(int code);
 }
 #endif
 
-#endif //__GEOFENCE_LOG_H__
+#endif /*__GEOFENCE_LOG_H__ */

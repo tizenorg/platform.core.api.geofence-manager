@@ -35,23 +35,21 @@ G_BEGIN_DECLS
 typedef struct _GeofenceInternal 	GeofenceInternal;
 typedef struct _GeofenceInternalClass	GeofenceInternalClass;
 
-struct _GeofenceInternal
-{
+struct _GeofenceInternal {
 	GObject parent_instance;
 };
 
-struct _GeofenceInternalClass
-{
+struct _GeofenceInternalClass {
 	GObjectClass parent_class;
 
-	void (* zone_in) (guint geofence_id);
-	void (* zone_out) (guint geofence_id);
-	void (* geofence_event) (guint place_id, guint geofence_id, guint error, guint state);
+	void (* zone_in)(guint geofence_id);
+	void (* zone_out)(guint geofence_id);
+	void (* geofence_event)(guint place_id, guint geofence_id, guint error, guint state);
 };
 
-//typedef void (*service_status_cb) (int status, void *user_data);
+/*typedef void (*service_status_cb) (int status, void *user_data); */
 
-GType geofence_internal_get_type (void);
+GType geofence_internal_get_type(void);
 
 G_END_DECLS
 

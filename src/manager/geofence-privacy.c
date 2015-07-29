@@ -31,8 +31,7 @@
 #define CPPAPP  3
 #define LOCATION_PRIVILEGE	"http://tizen.org/privilege/location"
 
-int
-geofence_get_app_type(void)
+int location_get_app_type(char *target_app_id)
 {
 	int ret = 0;
 	pid_t pid = 0;
@@ -40,24 +39,28 @@ geofence_get_app_type(void)
 	app_info_h app_info;
 	char *type = NULL;
 
-	pid = getpid();
-	ret = app_manager_get_app_id(pid, &app_id);
-	if (ret != APP_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Fail to get app_id. Err[%d]", ret);
-		return 0;
+	if (target_app_id == NULL) {
+		pid = getpid();
+		ret = app_manager_get_app_id(pid, &app_id);
+		if (ret != APP_MANAGER_ERROR_NONE) {
+			GEOFENCE_LOGE("Fail to get app_id. Err[%d]", ret);
+			return GEOFENCE_MANAGER_ERROR_NONE;
+		}
+	} else {
+		app_id = g_strdup(target_app_id);
 	}
 
 	ret = app_info_create(app_id, &app_info);
 	if (ret != APP_MANAGER_ERROR_NONE) {
 		GEOFENCE_LOGE("Fail to get app_id. Err[%d]", ret);
-		free(app_id);
+		g_free(app_id);
 		return 0;
 	}
 
 	ret = app_info_get_type(app_info, &type);
 	if (ret != APP_MANAGER_ERROR_NONE) {
 		GEOFENCE_LOGE("Fail to get type. Err[%d]", ret);
-		free(app_id);
+		g_free(app_id);
 		app_info_destroy(app_info);
 		return 0;
 	}
@@ -69,14 +72,14 @@ geofence_get_app_type(void)
 	else
 		ret = CAPP;
 
-	free(type);
-	free(app_id);
+	g_free(type);
+	g_free(app_id);
 	app_info_destroy(app_info);
 
 	return ret;
 }
 
-void geofence_privacy_initialize()
+void geofence_privacy_initialize(void)
 {
 	int ret = 0;
 	pid_t pid = 0;
@@ -92,30 +95,31 @@ void geofence_privacy_initialize()
 	}
 
 	ret = pkgmgrinfo_appinfo_get_appinfo(app_id, &pkgmgrinfo_appinfo);
-    if (ret != PACKAGE_MANAGER_ERROR_NONE) {
-        GEOFENCE_LOGE("Fail to get appinfo for [%s]. Err[%d]", app_id, ret);
-        free(app_id);
-        return;
-    }
-    ret = pkgmgrinfo_appinfo_get_pkgname(pkgmgrinfo_appinfo, &package_id);
+	if (ret != PACKAGE_MANAGER_ERROR_NONE) {
+		GEOFENCE_LOGE("Fail to get appinfo for [%s]. Err[%d]", app_id, ret);
+		g_free(app_id);
+		return;
+	}
+	ret = pkgmgrinfo_appinfo_get_pkgname(pkgmgrinfo_appinfo, &package_id);
 	if (ret != PACKAGE_MANAGER_ERROR_NONE) {
 		GEOFENCE_LOGE("Fail to get package_id for [%s]. Err[%d]", app_id, ret);
-		free(app_id);
+		pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
+		g_free(app_id);
 		return;
 	}
 
 	ret = privacy_checker_initialize(package_id);
 	if (ret != PRIV_MGR_ERROR_SUCCESS) {
 		GEOFENCE_LOGE("Fail to initialize privacy checker. err[%d]", ret);
-		free(package_id);
-		free(app_id);
+		pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
+		g_free(app_id);
 		return;
 	}
 
 	GEOFENCE_LOGD("Success to initialize privacy checker");
 
-	free(app_id);
-	free(package_id);
+	g_free(app_id);
+	pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
 }
 
 void geofence_privacy_finalize(void)
@@ -136,7 +140,7 @@ int geofence_get_privacy(void)
 	pid_t pid = 0;
 	char *app_id = NULL;
 	char *package_id = NULL;
-
+	int app_type = 0;
 	pkgmgrinfo_appinfo_h pkgmgrinfo_appinfo;
 
 	pid = getpid();
@@ -146,29 +150,38 @@ int geofence_get_privacy(void)
 		return GEOFENCE_MANAGER_ERROR_NONE;
 	}
 
+	app_type = location_get_app_type(app_id);
+	if (app_type == CPPAPP) {
+		GEOFENCE_LOGE("CPPAPP use location");
+		g_free(app_id);
+		return GEOFENCE_MANAGER_ERROR_NONE;
+	}
+
 	ret = pkgmgrinfo_appinfo_get_appinfo(app_id, &pkgmgrinfo_appinfo);
-    if (ret != PACKAGE_MANAGER_ERROR_NONE) {
-        GEOFENCE_LOGE("Fail to get appinfo for [%s]. Err[%d]", app_id, ret);
-        free(app_id);
-        return GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED;
-    }
-    ret = pkgmgrinfo_appinfo_get_pkgname(pkgmgrinfo_appinfo, &package_id);
 	if (ret != PACKAGE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Fail to get package_id for [%s]. Err[%d]", app_id, ret);
-		free(app_id);
+		GEOFENCE_LOGE("Fail to get appinfo of [%s]. Err[%d]", app_id, ret);
+		g_free(app_id);
 		return GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED;
 	}
+
+	ret = pkgmgrinfo_appinfo_get_pkgname(pkgmgrinfo_appinfo, &package_id);
+	if (ret != PACKAGE_MANAGER_ERROR_NONE) {
+		GEOFENCE_LOGE("Fail to get package_id of [%s]. Err[%d]", app_id, ret);
+		g_free(app_id);
+		pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
+		return GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED;
+	}
+
 	ret = privacy_checker_check_package_by_privilege(package_id, LOCATION_PRIVILEGE);
 	if (ret != PRIV_MGR_ERROR_SUCCESS) {
-		GEOFENCE_LOGE("Fail to get privilege for [%s]. Err[%d]", package_id, ret);
-
-		free(app_id);
+		GEOFENCE_LOGE("Fail to get privilege of [%s] package. Err[%d]", package_id, ret);
+		pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
+		g_free(app_id);
 		return GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED;
 	}
-	
-	free(package_id);
-	free(app_id);
+
+	pkgmgrinfo_appinfo_destroy_appinfo(pkgmgrinfo_appinfo);
+	g_free(app_id);
 
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
-

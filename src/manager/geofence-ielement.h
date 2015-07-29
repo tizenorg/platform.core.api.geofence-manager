@@ -18,7 +18,6 @@
 
 #include <glib-object.h>
 #include "geofence-type-private.h"
-#include "geofence-data.h"
 
 /**
  * @file geofence-ielement.h
@@ -28,10 +27,10 @@
 G_BEGIN_DECLS
 
 enum {
-	ZONE_IN,
-	ZONE_OUT,
-	GEOFENCE_EVENT,
-	LAST_SIGNAL
+    ZONE_IN,
+    ZONE_OUT,
+    GEOFENCE_EVENT,
+    LAST_SIGNAL
 };
 
 #define GEOFENCE_TYPE_IELEMENT                  (geofence_ielement_get_type ())
@@ -46,18 +45,17 @@ typedef int (*TYPE_GEOFENCE_CREATE)(GeofenceIElement *self);
 typedef int (*TYPE_GEOFENCE_DESTROY)(GeofenceIElement *self);
 typedef int (*TYPE_GEOFENCE_ENABLE)(GeofenceIElement *self, int geofence_id, bool enable);
 typedef int (*TYPE_GEOFENCE_START)(GeofenceIElement *self, int geofence_id);
-typedef int (*TYPE_GEOFENCE_STOP) (GeofenceIElement *self, int geofence_id);
+typedef int (*TYPE_GEOFENCE_STOP)(GeofenceIElement *self, int geofence_id);
 typedef int (*TYPE_GEOFENCE_ADD)(GeofenceIElement *self, geofence_s *params, int *geofence_id);
 typedef int (*TYPE_GEOFENCE_ADD_PLACE)(GeofenceIElement *self, const char *place_name, int *place_id);
 typedef int (*TYPE_GEOFENCE_UPDATE_PLACE)(GeofenceIElement *self, const char *place_name, int place_id);
 typedef int (*TYPE_GEOFENCE_REMOVE)(GeofenceIElement *self, int geofence_id);
 typedef int (*TYPE_GEOFENCE_REMOVE_PLACE)(GeofenceIElement *self, int place_id);
-typedef int (*TYPE_GEOFENCE_GET_PLACE_NAME) (GeofenceIElement *self, int place_id, char **place_name);
-typedef int (*TYPE_GEOFENCE_GET_LIST) (GeofenceIElement *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params);
-typedef int (*TYPE_GEOFENCE_GET_PLACE_LIST) (GeofenceIElement *self, int *place_amount, int **place_ids, place_s **params);
+typedef int (*TYPE_GEOFENCE_GET_PLACE_NAME)(GeofenceIElement *self, int place_id, char **place_name);
+typedef int (*TYPE_GEOFENCE_GET_LIST)(GeofenceIElement *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params);
+typedef int (*TYPE_GEOFENCE_GET_PLACE_LIST)(GeofenceIElement *self, int *place_amount, int **place_ids, place_s **params);
 
-struct _GeofenceIElementInterface
-{
+struct _GeofenceIElementInterface {
 	GTypeInterface parent_iface;
 
 	TYPE_GEOFENCE_CREATE		create;
@@ -75,21 +73,21 @@ struct _GeofenceIElementInterface
 	TYPE_GEOFENCE_GET_PLACE_LIST	get_place_list;
 };
 
-GType geofence_ielement_get_type (void);
+GType geofence_ielement_get_type(void);
 
-int geofence_ielement_create (GeofenceIElement *self);
-int geofence_ielement_destroy (GeofenceIElement *self);
-int geofence_ielement_enable_service (GeofenceIElement *self, int geofence_id, bool enable);
-int geofence_ielement_start (GeofenceIElement *self, int geofence_id);
-int geofence_ielement_stop (GeofenceIElement *self, int geofence_id);
-int geofence_ielement_add (GeofenceIElement *self, geofence_s *params, int *geofence_id);
-int geofence_ielement_add_place (GeofenceIElement *self, const char *place_name, int *place_id);
-int geofence_ielement_update_place (GeofenceIElement *self, const char *place_name, int place_id);
-int geofence_ielement_remove (GeofenceIElement *self, int geofence_id);
-int geofence_ielement_remove_place (GeofenceIElement *self, int place_id);
-int geofence_ielement_get_place_name (GeofenceIElement *self, int place_id, char **place_name);
-int geofence_ielement_get_fence_list (GeofenceIElement *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params);
-int geofence_ielement_get_place_list (GeofenceIElement *self, int *place_amount, int **place_ids, place_s **params);
+int geofence_ielement_create(GeofenceIElement *self);
+int geofence_ielement_destroy(GeofenceIElement *self);
+int geofence_ielement_enable_service(GeofenceIElement *self, int geofence_id, bool enable);
+int geofence_ielement_start(GeofenceIElement *self, int geofence_id);
+int geofence_ielement_stop(GeofenceIElement *self, int geofence_id);
+int geofence_ielement_add(GeofenceIElement *self, geofence_s *params, int *geofence_id);
+int geofence_ielement_add_place(GeofenceIElement *self, const char *place_name, int *place_id);
+int geofence_ielement_update_place(GeofenceIElement *self, const char *place_name, int place_id);
+int geofence_ielement_remove(GeofenceIElement *self, int geofence_id);
+int geofence_ielement_remove_place(GeofenceIElement *self, int place_id);
+int geofence_ielement_get_place_name(GeofenceIElement *self, int place_id, char **place_name);
+int geofence_ielement_get_fence_list(GeofenceIElement *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params);
+int geofence_ielement_get_place_list(GeofenceIElement *self, int *place_amount, int **place_ids, place_s **params);
 
 G_END_DECLS
 

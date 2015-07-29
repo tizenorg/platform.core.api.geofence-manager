@@ -29,7 +29,7 @@ GType geofence_parameter_get_type(void)
 
 geofence_s *geofence_parameter_new(gint place_id, guint type, gdouble latitude, gdouble longitude, guint radius, const gchar *address, const gchar *bssid, const gchar *ssid)
 {
-    GEOFENCE_LOGD("geofence_parameter_new");
+	GEOFENCE_LOGD("geofence_parameter_new");
 
 	if (place_id < 0) return NULL;
 	if (type == GEOFENCE_TYPE_GEOPOINT && (latitude < -90 || latitude > 90)) return NULL;

@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "geofence-log.h"
-#include "geofence-module.h"
 #include "module-internal.h"
 
 #define MAX_MODULE_INDEX 4
@@ -36,9 +35,6 @@ static GMod *gmod_new(const char *module_name, gboolean is_resident)
 		return NULL;
 	}
 	gmod->path = g_module_build_path(MODULE_PATH_PREFIX, gmod->name);
-
-	/* shlg 20141016 */
-	/* gmod->path = g_strdup("/usr/lib/geofence/module/libgeofence.so"); */
 
 	if (!gmod->path) {
 		g_free(gmod->name);
@@ -177,7 +173,7 @@ void module_free(gpointer mod, const char *module_name)
 	mod_free(mod, module_name);
 }
 
-gpointer module_new(const char *module_name)
+GeofenceInternalMod *module_new(const char *module_name)
 {
 	if (!module_name)
 		return NULL;
@@ -226,7 +222,7 @@ gboolean module_is_supported(const char *module_name)
 	return found;
 }
 
-gchar *mod_get_realpath(const gchar * module_name)
+gchar *mod_get_realpath(const gchar *module_name)
 {
 	gchar link_path[PATH_MAX] = { 0, };
 	gchar *path = NULL;

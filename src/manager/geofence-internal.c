@@ -23,6 +23,7 @@
 #include "geofence-ielement.h"
 #include "geofence-param.h"
 #include "geofence-internal.h"
+#include "geofence_module.h"
 
 
 typedef struct _GeofenceInternalPrivate {
@@ -32,9 +33,9 @@ typedef struct _GeofenceInternalPrivate {
 } GeofenceInternalPrivate;
 
 enum {
-	PROP_0,
-	PROP_GEOFENCE_PARAMS,
-	PROP_MAX
+    PROP_0,
+    PROP_GEOFENCE_PARAMS,
+    PROP_MAX
 };
 
 static guint32 signals[LAST_SIGNAL] = { 0, };
@@ -47,8 +48,8 @@ static void geofence_ielement_interface_init(GeofenceIElementInterface *iface);
 
 
 G_DEFINE_TYPE_WITH_CODE(GeofenceInternal, geofence_internal, G_TYPE_OBJECT,
-			G_IMPLEMENT_INTERFACE(GEOFENCE_TYPE_IELEMENT,
-			geofence_ielement_interface_init));
+                        G_IMPLEMENT_INTERFACE(GEOFENCE_TYPE_IELEMENT,
+                                              geofence_ielement_interface_init));
 
 /*
 static void geofence_parameter_set_property (GObject *object,
@@ -103,9 +104,9 @@ static void geofence_internal_finalize(GObject *gobject)
 }
 
 static void geofence_internal_get_property(GObject *object,
-	guint property_id,
-	GValue *value,
-	GParamSpec *pspec)
+                                           guint property_id,
+                                           GValue *value,
+                                           GParamSpec *pspec)
 {
 	GEOFENCE_LOGD("geofence_internal_get_property");
 	GeofenceInternalPrivate *priv = GET_PRIVATE(object);
@@ -124,9 +125,9 @@ static void geofence_internal_get_property(GObject *object,
 }
 
 void geofence_signaling(GeofenceObject *obj,
-	guint32 signals[LAST_SIGNAL],
-	guint geofence_id,
-	guint state)
+                        guint32 signals[LAST_SIGNAL],
+                        guint geofence_id,
+                        guint state)
 {
 	GEOFENCE_LOGD("geofence_signaling");
 
@@ -144,11 +145,11 @@ void geofence_signaling(GeofenceObject *obj,
 }
 
 void geofence_event_signaling(GeofenceObject *obj,
-	guint32 signals[LAST_SIGNAL],
-	guint place_id,
-	guint fence_id,
-	guint error,
-	guint state)
+                              guint32 signals[LAST_SIGNAL],
+                              guint place_id,
+                              guint fence_id,
+                              guint error,
+                              guint state)
 {
 	GEOFENCE_LOGD("geofence_event_signaling");
 	g_return_if_fail(obj);
@@ -230,7 +231,7 @@ static int geofence_internal_enable_service(GeofenceInternal *self, int geofence
 	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 	g_return_val_if_fail(priv->mod->ops.enable_service, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	
+
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 	ret = priv->mod->ops.enable_service(priv->mod->handler, geofence_id, enable);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
@@ -278,7 +279,6 @@ static int geofence_internal_stop(GeofenceInternal *self, int geofence_id)
 static int geofence_internal_add(GeofenceInternal *self, geofence_s *params, int *geofence_id)
 {
 	GEOFENCE_LOGD("geofence_internal_add");
-
 	GeofenceInternalPrivate *priv = GET_PRIVATE(self);
 
 	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
@@ -293,7 +293,7 @@ static int geofence_internal_add(GeofenceInternal *self, geofence_s *params, int
 	if (priv->params) geofence_parameter_free(priv->params);
 	priv->params = geofence_parameter_copy(params);
 
-    g_return_val_if_fail(priv->params, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->params, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 
 	if (priv->params->type == GEOFENCE_TYPE_GEOPOINT) {
 		ret = priv->mod->ops.add_geopoint(priv->mod->handler, priv->params->place_id, priv->params->latitude, priv->params->longitude, priv->params->radius, priv->params->address, geofence_id);
@@ -312,7 +312,42 @@ static int geofence_internal_add(GeofenceInternal *self, geofence_s *params, int
 	}
 
 	return ret;
+}
 
+static int geofence_internal_remove(GeofenceInternal *self, int geofence_id)
+{
+	GEOFENCE_LOGD("geofence_internal_remove");
+	GeofenceInternalPrivate *priv = GET_PRIVATE(self);
+	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod->ops.remove_geofence, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+
+	int ret = GEOFENCE_MANAGER_ERROR_NONE;
+
+	ret = priv->mod->ops.remove_geofence(priv->mod->handler, geofence_id);
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+		GEOFENCE_LOGE("Failed to remove geofence. Error[%d]", ret);
+	}
+	return ret;
+}
+
+static int geofence_internal_get_list(GeofenceInternal *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params)
+{
+	GEOFENCE_LOGD("geofence_internal_get_list");
+	GeofenceInternalPrivate *priv = GET_PRIVATE(self);
+	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod->ops.get_geofences, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+
+	int ret = GEOFENCE_MANAGER_ERROR_NONE;
+
+	ret = priv->mod->ops.get_geofences(priv->mod->handler, place_id, fence_amount, fence_ids, params);
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+		GEOFENCE_LOGE("Failed to get list. Error[%d]", ret);
+	}
+	return ret;
 }
 
 static int geofence_internal_add_place(GeofenceInternal *self, const char *place_name, int *place_id)
@@ -359,25 +394,6 @@ static int geofence_internal_update_place(GeofenceInternal *self, const char *pl
 	return ret;
 }
 
-static int geofence_internal_remove(GeofenceInternal *self, int geofence_id)
-{
-
-	GEOFENCE_LOGD("geofence_internal_remove");
-	GeofenceInternalPrivate *priv = GET_PRIVATE(self);
-	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod->ops.remove_geofence, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-
-	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = priv->mod->ops.remove_geofence(priv->mod->handler, geofence_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Failed to remove geofence. Error[%d]", ret);
-	}
-	return ret;
-}
-
 static int geofence_internal_remove_place(GeofenceInternal *self, int place_id)
 {
 
@@ -419,25 +435,6 @@ static int geofence_internal_get_place_name(GeofenceInternal *self, int place_id
 	return ret;
 }
 
-static int geofence_internal_get_list(GeofenceInternal *self, int place_id, int *fence_amount, int **fence_ids, geofence_s **params)
-{
-
-	GEOFENCE_LOGD("geofence_internal_get_list");
-	GeofenceInternalPrivate *priv = GET_PRIVATE(self);
-	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod->ops.get_list, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-
-	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = priv->mod->ops.get_list(priv->mod->handler, place_id, fence_amount, fence_ids, (struct geofence_s **)params);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Failed to get list. Error[%d]", ret);
-	}
-	return ret;
-}
-
 static int geofence_internal_get_place_list(GeofenceInternal *self, int *place_amount, int **place_ids, place_s **params)
 {
 
@@ -446,11 +443,11 @@ static int geofence_internal_get_place_list(GeofenceInternal *self, int *place_a
 	g_return_val_if_fail(priv, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 	g_return_val_if_fail(priv->mod, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 	g_return_val_if_fail(priv->mod->handler, GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	g_return_val_if_fail(priv->mod->ops.get_place_list, GEOFENCE_MANAGER_ERROR_EXCEPTION);
+	g_return_val_if_fail(priv->mod->ops.get_places, GEOFENCE_MANAGER_ERROR_EXCEPTION);
 
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = priv->mod->ops.get_place_list(priv->mod->handler, place_amount, place_ids, params);
+	ret = priv->mod->ops.get_places(priv->mod->handler, place_amount, place_ids, params);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
 		GEOFENCE_LOGE("Failed to get place list. Error[%d]", ret);
 	}
@@ -465,12 +462,13 @@ static void geofence_ielement_interface_init(GeofenceIElementInterface *iface)
 	iface->start = (TYPE_GEOFENCE_START) geofence_internal_start;
 	iface->stop = (TYPE_GEOFENCE_STOP) geofence_internal_stop;
 	iface->add = (TYPE_GEOFENCE_ADD) geofence_internal_add;
+	iface->remove = (TYPE_GEOFENCE_REMOVE) geofence_internal_remove;
+	iface->get_list = (TYPE_GEOFENCE_GET_LIST) geofence_internal_get_list;
+
 	iface->add_place = (TYPE_GEOFENCE_ADD_PLACE) geofence_internal_add_place;
 	iface->update_place = (TYPE_GEOFENCE_UPDATE_PLACE) geofence_internal_update_place;
-	iface->remove = (TYPE_GEOFENCE_REMOVE) geofence_internal_remove;
 	iface->remove_place = (TYPE_GEOFENCE_REMOVE_PLACE) geofence_internal_remove_place;
 	iface->get_place_name = (TYPE_GEOFENCE_GET_PLACE_NAME) geofence_internal_get_place_name;
-	iface->get_list = (TYPE_GEOFENCE_GET_LIST) geofence_internal_get_list;
 	iface->get_place_list = (TYPE_GEOFENCE_GET_PLACE_LIST) geofence_internal_get_place_list;
 }
 
@@ -492,7 +490,7 @@ static void geofence_internal_class_init(GeofenceInternalClass *klass)
 	GEOFENCE_LOGD("geofence_internal_class_init");
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
-/*	gobject_class->set_property = geofence_parameter_set_property; */
+	/*	gobject_class->set_property = geofence_parameter_set_property; */
 	gobject_class->get_property = geofence_internal_get_property;
 
 	gobject_class->dispose = geofence_internal_dispose;
@@ -501,46 +499,46 @@ static void geofence_internal_class_init(GeofenceInternalClass *klass)
 	g_type_class_add_private(klass, sizeof(GeofenceInternalPrivate));
 
 	signals[ZONE_IN] = g_signal_new("zone-in",
-			G_TYPE_FROM_CLASS(klass),
-			G_SIGNAL_RUN_FIRST |
-			G_SIGNAL_NO_RECURSE,
-			G_STRUCT_OFFSET(GeofenceInternalClass, zone_in),
-			NULL, NULL,
-			geofence_VOID__UINT,
-			G_TYPE_NONE, 1,
-			G_TYPE_UINT);
+	                                G_TYPE_FROM_CLASS(klass),
+	                                G_SIGNAL_RUN_FIRST |
+	                                G_SIGNAL_NO_RECURSE,
+	                                G_STRUCT_OFFSET(GeofenceInternalClass, zone_in),
+	                                NULL, NULL,
+	                                geofence_VOID__UINT,
+	                                G_TYPE_NONE, 1,
+	                                G_TYPE_UINT);
 
 	signals[ZONE_OUT] = g_signal_new("zone-out",
-			G_TYPE_FROM_CLASS(klass),
-			G_SIGNAL_RUN_FIRST |
-			G_SIGNAL_NO_RECURSE,
-			G_STRUCT_OFFSET(GeofenceInternalClass, zone_out),
-			NULL, NULL,
-			geofence_VOID__UINT,
-			G_TYPE_NONE, 1,
-			G_TYPE_UINT);
+	                                 G_TYPE_FROM_CLASS(klass),
+	                                 G_SIGNAL_RUN_FIRST |
+	                                 G_SIGNAL_NO_RECURSE,
+	                                 G_STRUCT_OFFSET(GeofenceInternalClass, zone_out),
+	                                 NULL, NULL,
+	                                 geofence_VOID__UINT,
+	                                 G_TYPE_NONE, 1,
+	                                 G_TYPE_UINT);
 
 	signals[GEOFENCE_EVENT] = g_signal_new("geofence-event",
-			G_TYPE_FROM_CLASS(klass),
-			G_SIGNAL_RUN_FIRST |
-			G_SIGNAL_NO_RECURSE,
-			G_STRUCT_OFFSET(GeofenceInternalClass, geofence_event),
-			NULL, NULL,
-			g_cclosure_marshal_generic,
-			G_TYPE_NONE, 4,
-			G_TYPE_UINT,
-			G_TYPE_UINT,
-			G_TYPE_UINT,
-			G_TYPE_UINT);
+	                                       G_TYPE_FROM_CLASS(klass),
+	                                       G_SIGNAL_RUN_FIRST |
+	                                       G_SIGNAL_NO_RECURSE,
+	                                       G_STRUCT_OFFSET(GeofenceInternalClass, geofence_event),
+	                                       NULL, NULL,
+	                                       g_cclosure_marshal_generic,
+	                                       G_TYPE_NONE, 4,
+	                                       G_TYPE_UINT,
+	                                       G_TYPE_UINT,
+	                                       G_TYPE_UINT,
+	                                       G_TYPE_UINT);
 
 	properties[PROP_GEOFENCE_PARAMS] = g_param_spec_boxed("geofence-parameter",
-			"geofence parameter prop",
-			"geofence parameter data",
-			GEOFENCE_PRAMETER,
-			G_PARAM_READABLE);
+	                                                      "geofence parameter prop",
+	                                                      "geofence parameter data",
+	                                                      GEOFENCE_PRAMETER,
+	                                                      G_PARAM_READABLE);
 
 	g_object_class_install_properties(gobject_class,
-			PROP_MAX,
-			properties);
+	                                  PROP_MAX,
+	                                  properties);
 
 }

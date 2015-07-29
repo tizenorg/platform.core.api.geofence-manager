@@ -1,9 +1,9 @@
 #sbs-git:slp/api/geofence-manager capi-geofence-manager 0.1.0 d1ee09a32e8bc0e9ed48ece37c641a7393c086c5
 Name:       capi-geofence-manager
 Summary:    A Geofence Manager library in Tizen Native API
-Version:    0.2.2
+Version:    0.3.0
 Release:    1
-Group:      Location/API
+Group:      Location/Libraries
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 
@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(privacy-manager-client)
 
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
+Provides: capi-geofence-manager-plugin-devel
 
 %description
 A Geofence Manager library in Tizen Native API
@@ -46,7 +47,6 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
-
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -55,18 +55,34 @@ rm -rf %{buildroot}
 %manifest capi-geofence-manager.manifest
 %{_libdir}/libcapi-geofence-manager.so.*
 
-
 %package devel
-Summary:  A Geofence Manager library in Tizen Native API (Development)
-Group:    Location/API
+Summary: A Geofence Manager library in Tizen Native API (Development)
+Group:   Location/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
 A Geofence Manager library in Tizen Native API (Development)
 
-
 %files devel
 %{_includedir}/geofence/*.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-geofence-manager.so
+%exclude %{_includedir}/geofence/geofence_module.h
+%exclude %{_includedir}/geofence/geofence_data_type.h
 
+%package plugin-devel
+Summary:    Geofence Manager Plug-in (Development)
+Group:      Location/Libraries
+Requires:  %{name} = %{version}-%{release}
+
+%description plugin-devel
+This provides interfaces for Geofence Manager plugin. 
+
+%post plugin-devel
+
+%postun plugin-devel
+
+%files plugin-devel
+%defattr(-,root,root,-)
+%{_includedir}/geofence/geofence_module.h
+%{_includedir}/geofence/geofence_data_type.h

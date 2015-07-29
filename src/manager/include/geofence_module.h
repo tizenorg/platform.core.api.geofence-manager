@@ -16,36 +16,24 @@
 #ifndef __GEOFENCE_MODULE_H__
 #define __GEOFENCE_MODULE_H__
 
-#include <gmodule.h>
-#include "geofence-type-private.h"
+#include <geofence_data_type.h>
 
-G_BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/**
- * @file geofence-module.h
- * @brief This file contains the structure and enumeration for geofence plug-in development.
- */
-
-/**
- * @addtogroup LocationFW
- * @{
- * @defgroup LocationModules Location Modules
- * @brief  This sub module provides the definitions and structrues for 3rd party plugin modules.
- * @addtogroup LocationModules
- * @{
- */
 
 /**
  * @brief This represents a geofence callback function for geofence plug-in.
  */
-//typedef void (*GeofenceModGeofenceStatusCB) (gboolean enabled, gpointer userdata);
+/*typedef void (*GeofenceModGeofenceStatusCB) (gboolean enabled, gpointer userdata); */
 
 /**
  * @brief This represents a geofence callback function for geofence plug-in.
  */
-typedef void (*GeofenceModCB) (int fence_id, int state, gpointer userdata);
+typedef void (*GeofenceModCB)(int fence_id, int state, gpointer userdata);
 
-typedef void (*GeofenceModEventCB) (int place_id, int fence_id, int error, int state, gpointer userdata);
+typedef void (*GeofenceModEventCB)(int place_id, int fence_id, int error, int state, gpointer userdata);
 
 /**
  * @brief This represents APIs declared in a Geofence plug-in for Geofence modules.
@@ -54,17 +42,18 @@ typedef struct {
 	int (*create)(void *handle, GeofenceModCB geofence_cb, GeofenceModEventCB geofence_event_cb, void *userdata);
 	int (*destroy)(void *handle);
 	int (*enable_service)(void *handle, int fence_id, bool enable);
-	int (*add_geopoint)(void *handle, int place_id, double latitude, double longitude, int radius, const char *address, int *fence_id);
-	int (*add_bssid)(void *handle, int place_id, const char *bssid, const char *ssid, geofence_type_e type, int *fence_id);
-	int (*add_place)(void *handle, const char *place_name, int *place_id);
-	int (*update_place)(void *handle, int place_id, const char *place_name);
-	int (*remove_geofence)(void *handle, int fence_id);
-	int (*remove_place)(void *handle, int place_id);
 	int (*start_geofence)(void *handle, int fence_id);
 	int (*stop_geofence)(void *handle, int fence_id);
-	int (*get_place_name) (void *handle, int place_id, char **place_name);
-	int (*get_list) (void *handle, int place_id, int *fence_amount, int **fence_ids, geofence_h *params);
-	int (*get_place_list) (void *handle, int *place_amount, int **place_ids, place_s **params);
+	int (*add_geopoint)(void *handle, int place_id, double latitude, double longitude, int radius, const char *address, int *fence_id);
+	int (*add_bssid)(void *handle, int place_id, const char *bssid, const char *ssid, geofence_type_e type, int *fence_id);
+	int (*remove_geofence)(void *handle, int fence_id);
+	int (*get_geofences)(void *handle, int place_id, int *fence_amount, int **fence_ids, geofence_s **params);
+
+	int (*add_place)(void *handle, const char *place_name, int *place_id);
+	int (*update_place)(void *handle, int place_id, const char *place_name);
+	int (*remove_place)(void *handle, int place_id);
+	int (*get_place_name)(void *handle, int place_id, char **place_name);
+	int (*get_places)(void *handle, int *place_amount, int **place_ids, place_s **params);
 } GeofenceModOps;
 
 /**
@@ -87,9 +76,9 @@ typedef struct {
  */
 #define GEOFENCE_MODULE_API __attribute__((visibility("default"))) G_MODULE_EXPORT
 
-/**
- * @} @}
- */
-G_END_DECLS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

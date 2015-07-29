@@ -17,10 +17,9 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#include "geofence_type.h"
 #include "geofence-internal.h"
-#include "geofence-log.h"
 #include "module-internal.h"
+#include "geofence-log.h"
 #include "geofence.h"
 
 int geofence_init(void)

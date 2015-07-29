@@ -17,33 +17,32 @@
 #define __MODULE_INTERNAL_H__
 
 #include <gmodule.h>
-#include "geofence-module.h"
+#include "geofence_module.h"
 
 /**
  * @file module-internal.h
  * @brief This file contains the internal definitions and structures related to module.
  */
 
-typedef struct{
-	GModule* module;
-	char* name;
-	char* path;
-} GMod;
-
+G_BEGIN_DECLS
 
 typedef struct {
-	GMod* gmod;
+	GModule *module;
+	char *name;
+	char *path;
+} GMod;
+
+typedef struct {
+	GMod *gmod;
 	gpointer handler;
-	gpointer (*init)(GeofenceModOps* ops);
+	gpointer(*init)(GeofenceModOps *ops);
 	void (*shutdown)(gpointer handle);
 	GeofenceModOps ops;
 } GeofenceInternalMod;
 
-G_BEGIN_DECLS
-
 gboolean module_init(void);
-gpointer module_new(const char* module_name);
-void module_free(gpointer mod, const char* module_name);
+GeofenceInternalMod *module_new(const char *module_name);
+void module_free(gpointer mod, const char *module_name);
 gboolean module_is_supported(const char *module_name);
 gchar *mod_get_realpath(const gchar *module_name);
 
