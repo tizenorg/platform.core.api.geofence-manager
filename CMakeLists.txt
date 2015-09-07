@@ -16,12 +16,9 @@ SET(INC_DIR
     )
 INCLUDE_DIRECTORIES(${INC_DIR})
 
-SET(dependents "dlog vconf glib-2.0 gmodule-2.0 capi-appfw-app-manager capi-appfw-package-manager pkgmgr-info privacy-manager-client")
+SET(dependents "dlog vconf glib-2.0 gmodule-2.0 capi-appfw-app-manager capi-appfw-package-manager pkgmgr-info privacy-manager-client capi-system-info")
 SET(pc_dependents "capi-base-common")
 
-IF(ENABLE_GEOFENCE)
-	ADD_DEFINITIONS(-DENABLE_GEOFENCE)
-ENDIF(ENABLE_GEOFENCE)
 ADD_DEFINITIONS("-DMODULE_PATH_PREFIX=\"${MODULE_PATH}\"")
 
 INCLUDE(FindPkgConfig)
