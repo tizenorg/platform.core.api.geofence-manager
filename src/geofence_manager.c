@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <system_info.h>
 
 #include "geofence-log.h"
 #include "geofence.h"
@@ -32,6 +33,16 @@ static GHashTable *fence_map = NULL;
 static GList *tracking_list = NULL;
 static geofence_manager_s *handle = NULL;
 static int gIsMgrCreated = 0;
+
+bool __is_geofence_feature_enabled()
+{
+	const char *geofence_feature = "http://tizen.org/feature/location.geofence";
+	bool geofence_enabled = false;
+
+	system_info_get_platform_bool(geofence_feature, &geofence_enabled);
+
+	return geofence_enabled;
+}
 
 static void __cb_zone_in(GObject *self, guint geofence_id, gpointer userdata)
 {
@@ -206,9 +217,10 @@ static bool __is_fence_started(int fence_id)
 EXPORT_API int geofence_manager_is_supported(bool *supported)
 {
 	GEOFENCE_LOGD("geofence_manager_is_supported");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(supported);
 
 	*supported = geofence_is_supported();
@@ -219,9 +231,10 @@ EXPORT_API int geofence_manager_is_supported(bool *supported)
 EXPORT_API int geofence_manager_create(geofence_manager_h *manager)
 {
 	GEOFENCE_LOGD("geofence_manager_create");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
@@ -277,9 +290,10 @@ EXPORT_API int geofence_manager_create(geofence_manager_h *manager)
 EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 {
 	GEOFENCE_LOGD("geofence_manager_destroy");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
@@ -333,9 +347,10 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 /*EXPORT_API int geofence_manager_enable_fence(geofence_manager_h manager, int geofence_id, bool enable)
 {
 	GEOFENCE_LOGD("geofence_manager_enable_service");
-#ifndef ENABLE_GEOFENCE
-    return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
@@ -357,9 +372,10 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 EXPORT_API int geofence_manager_start(geofence_manager_h manager, int geofence_id)
 {
 	GEOFENCE_LOGD("geofence_manager_start : Geofence ID[%d]", geofence_id);
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 
@@ -385,9 +401,10 @@ EXPORT_API int geofence_manager_start(geofence_manager_h manager, int geofence_i
 EXPORT_API int geofence_manager_stop(geofence_manager_h manager, int geofence_id)
 {
 	GEOFENCE_LOGD("geofence_manager_stop");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 
@@ -415,9 +432,10 @@ EXPORT_API int geofence_manager_stop(geofence_manager_h manager, int geofence_id
 EXPORT_API int geofence_manager_add_fence(geofence_manager_h manager, geofence_h params, int *geofence_id)
 {
 	GEOFENCE_LOGD("ENTER >>>");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(params);
 	GEOFENCE_NULL_ARG_CHECK(geofence_id);
@@ -441,9 +459,10 @@ EXPORT_API int geofence_manager_add_fence(geofence_manager_h manager, geofence_h
 EXPORT_API int geofence_manager_add_place(geofence_manager_h manager, const char *place_name, int *place_id)
 {
 	GEOFENCE_LOGD("ENTER >>>");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(place_id);
 	GEOFENCE_NULL_ARG_CHECK(place_name);
@@ -466,9 +485,9 @@ EXPORT_API int geofence_manager_add_place(geofence_manager_h manager, const char
 
 EXPORT_API int geofence_manager_update_place(geofence_manager_h manager, int place_id, const char *place_name)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(place_name);
 	GEOFENCE_CHECK_CONDITION(place_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
@@ -494,9 +513,10 @@ EXPORT_API int geofence_manager_update_place(geofence_manager_h manager, int pla
 EXPORT_API int geofence_manager_remove_fence(geofence_manager_h manager, int geofence_id)
 {
 	GEOFENCE_LOGD("geofence_manager_remove_geofence");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 
@@ -518,9 +538,10 @@ EXPORT_API int geofence_manager_remove_fence(geofence_manager_h manager, int geo
 EXPORT_API int geofence_manager_remove_place(geofence_manager_h manager, int place_id)
 {
 	GEOFENCE_LOGD("geofence_manager_remove_place");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(place_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 
@@ -543,9 +564,10 @@ EXPORT_API int geofence_manager_remove_place(geofence_manager_h manager, int pla
 EXPORT_API int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, char **place_name)
 {
 	GEOFENCE_LOGD("geofence_manager_remove_place");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(place_name);
 	GEOFENCE_CHECK_CONDITION(place_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
@@ -569,9 +591,10 @@ EXPORT_API int geofence_manager_get_place_name(geofence_manager_h manager, int p
 EXPORT_API int geofence_manager_set_geofence_state_changed_cb(geofence_manager_h manager, geofence_state_changed_cb callback, void *user_data)
 {
 	GEOFENCE_LOGD("geofence_manager_set_geofence_state_changed_cb");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	return __set_callback(manager, callback, user_data);
@@ -580,9 +603,10 @@ EXPORT_API int geofence_manager_set_geofence_state_changed_cb(geofence_manager_h
 EXPORT_API int geofence_manager_set_geofence_event_cb(geofence_manager_h manager, geofence_event_cb callback, void *user_data)
 {
 	GEOFENCE_LOGD("geofence_manager_set_geofence_event_cb");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	return __set_event_callback(manager, callback, user_data);
@@ -591,9 +615,10 @@ EXPORT_API int geofence_manager_set_geofence_event_cb(geofence_manager_h manager
 EXPORT_API int geofence_manager_unset_geofence_state_changed_cb(geofence_manager_h manager)
 {
 	GEOFENCE_LOGD("geofence_manager_unset_geofence_state_changed_cb");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	return __unset_callback(manager);
@@ -602,9 +627,10 @@ EXPORT_API int geofence_manager_unset_geofence_state_changed_cb(geofence_manager
 EXPORT_API int geofence_manager_unset_geofence_event_cb(geofence_manager_h manager)
 {
 	GEOFENCE_LOGD("geofence_manager_unset_geofence_event_cb");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	return __unset_event_callback(manager);
@@ -613,9 +639,10 @@ EXPORT_API int geofence_manager_unset_geofence_event_cb(geofence_manager_h manag
 EXPORT_API int geofence_manager_foreach_geofence_list(geofence_manager_h manager, geofence_manager_fence_cb callback, void *user_data)
 {
 	GEOFENCE_LOGD(">>> Start");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(callback);
 
@@ -665,9 +692,10 @@ EXPORT_API int geofence_manager_foreach_geofence_list(geofence_manager_h manager
 EXPORT_API int geofence_manager_foreach_place_geofence_list(geofence_manager_h manager, int place_id, geofence_manager_fence_cb callback, void *user_data)
 {
 	GEOFENCE_LOGD(">>> Start");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(callback);
 	GEOFENCE_CHECK_CONDITION(place_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
@@ -714,9 +742,10 @@ EXPORT_API int geofence_manager_foreach_place_geofence_list(geofence_manager_h m
 EXPORT_API int geofence_manager_foreach_place_list(geofence_manager_h manager, geofence_manager_place_cb callback, void *user_data)
 {
 	GEOFENCE_LOGD(">>> Start");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_NULL_ARG_CHECK(callback);
 
@@ -761,9 +790,10 @@ EXPORT_API int geofence_manager_foreach_place_list(geofence_manager_h manager, g
 EXPORT_API int geofence_create_geopoint(int place_id, double latitude, double longitude, int radius, const char *address, geofence_h *fence)
 {
 	GEOFENCE_LOGD("geofence_manager_create_geopoint");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(address);
 	GEOFENCE_CHECK_CONDITION(place_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
@@ -778,9 +808,10 @@ EXPORT_API int geofence_create_geopoint(int place_id, double latitude, double lo
 EXPORT_API int geofence_create_bluetooth(int place_id, const char *bssid, const char *ssid, geofence_h *fence)
 {
 	GEOFENCE_LOGD("geofence_create_bluetooth");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(bssid);
 	GEOFENCE_NULL_ARG_CHECK(ssid);
@@ -793,9 +824,10 @@ EXPORT_API int geofence_create_bluetooth(int place_id, const char *bssid, const 
 EXPORT_API int geofence_create_wifi(int place_id, const char *bssid, const char *ssid, geofence_h *fence)
 {
 	GEOFENCE_LOGD("geofence_create_wifi");
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(bssid);
 	GEOFENCE_NULL_ARG_CHECK(ssid);
@@ -807,9 +839,9 @@ EXPORT_API int geofence_create_wifi(int place_id, const char *bssid, const char 
 
 EXPORT_API int geofence_destroy(geofence_h fence)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	geofence_parameter_free((geofence_s *)fence);
 	return GEOFENCE_MANAGER_ERROR_NONE;
@@ -817,9 +849,9 @@ EXPORT_API int geofence_destroy(geofence_h fence)
 
 EXPORT_API int geofence_get_type(geofence_h fence, geofence_type_e *type)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(type);
 
@@ -830,9 +862,9 @@ EXPORT_API int geofence_get_type(geofence_h fence, geofence_type_e *type)
 
 EXPORT_API int geofence_get_place_id(geofence_h fence, int *place_id)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(place_id);
 
@@ -843,9 +875,9 @@ EXPORT_API int geofence_get_place_id(geofence_h fence, int *place_id)
 
 EXPORT_API int geofence_get_latitude(geofence_h fence, double *latitude)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(latitude);
 
@@ -856,9 +888,9 @@ EXPORT_API int geofence_get_latitude(geofence_h fence, double *latitude)
 
 EXPORT_API int geofence_get_longitude(geofence_h fence, double *longitude)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(longitude);
 
@@ -869,9 +901,9 @@ EXPORT_API int geofence_get_longitude(geofence_h fence, double *longitude)
 
 EXPORT_API int geofence_get_radius(geofence_h fence, int *radius)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(radius);
 
@@ -882,9 +914,9 @@ EXPORT_API int geofence_get_radius(geofence_h fence, int *radius)
 
 EXPORT_API int geofence_get_address(geofence_h fence, char **address)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(address);
 
@@ -895,9 +927,9 @@ EXPORT_API int geofence_get_address(geofence_h fence, char **address)
 
 EXPORT_API int geofence_get_bssid(geofence_h fence, char **bssid)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(bssid);
 
@@ -908,9 +940,9 @@ EXPORT_API int geofence_get_bssid(geofence_h fence, char **bssid)
 
 EXPORT_API int geofence_get_ssid(geofence_h fence, char **ssid)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(fence);
 	GEOFENCE_NULL_ARG_CHECK(ssid);
 
@@ -921,9 +953,9 @@ EXPORT_API int geofence_get_ssid(geofence_h fence, char **ssid)
 
 EXPORT_API int geofence_status_create(int geofence_id, geofence_status_h *status)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(status);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 	GEOFENCE_LOGD("Allocating memory for new status");
@@ -941,9 +973,9 @@ EXPORT_API int geofence_status_create(int geofence_id, geofence_status_h *status
 
 EXPORT_API int geofence_status_destroy(geofence_status_h status)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(status);
 
 	g_slice_free(geofence_status_s, ((geofence_status_s *)status));
@@ -952,9 +984,9 @@ EXPORT_API int geofence_status_destroy(geofence_status_h status)
 
 EXPORT_API int geofence_status_get_state(geofence_status_h status, geofence_state_e *state)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(status);
 	GEOFENCE_NULL_ARG_CHECK(state);
 
@@ -971,9 +1003,9 @@ EXPORT_API int geofence_status_get_state(geofence_status_h status, geofence_stat
 
 EXPORT_API int geofence_status_get_duration(geofence_status_h status, int *seconds)
 {
-#ifndef ENABLE_GEOFENCE
-	return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
-#endif
+	if (__is_geofence_feature_enabled() == false)
+			return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
+
 	GEOFENCE_NULL_ARG_CHECK(status);
 	GEOFENCE_NULL_ARG_CHECK(seconds);
 
