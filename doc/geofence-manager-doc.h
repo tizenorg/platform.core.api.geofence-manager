@@ -51,7 +51,8 @@
  *
  * @section CAPI_GEOFENCE_MANAGER_MODULE_FEATURE Related Features
  * This API is related with the following features:\n
- *	- http://tizen.org/feature/location\n
+ *  - http://tizen.org/feature/location\n
+ *  - http://tizen.org/feature/location.geofence\n
  *
  * It is recommended to design feature related codes in your application for reliability.\n
  *
@@ -90,6 +91,7 @@
  * @section CAPI_GEOFENCE_MODULE_FEATURE Related Features
  * This API is related with the following features:\n
  *  - http://tizen.org/feature/location\n
+ *  - http://tizen.org/feature/location.geofence\n
  *
  * It is recommended to design feature related codes in your application for reliability.\n
  *
