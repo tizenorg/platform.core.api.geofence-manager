@@ -65,12 +65,35 @@ typedef enum {
 
 /**
  * @brief Enumeration for geofence type.
+ * @since_tizen 3.0
+ */
+typedef enum {
+    GEOFENCE_PROXIMITY_STATE_UNCERTAIN = 0,		/**< Uncertain state of proximity */
+    GEOFENCE_PROXIMITY_STATE_FAR,				/**< Far state of proximity */
+    GEOFENCE_PROXIMITY_STATE_NEAR,				/**< Near state of proximity */
+    GEOFENCE_PROXIMITY_STATE_IMMEDIATE,			/**< Immediate state of proximity */
+} geofence_proximity_state_e;
+
+/**
+ * @brief Enumeration for geofence type.
+ * @since_tizen 3.0
+ */
+typedef enum {
+    GEOFENCE_PROXIMITY_PROVIDER_LOCATION = 0,	/**< Proximity is specified by geospatial coordinate */
+    GEOFENCE_PROXIMITY_PROVIDER_WIFI,			/**< Proximity is specified by Wi-Fi access point */
+    GEOFENCE_PROXIMITY_PROVIDER_BLUETOOTH,		/**< Proximity is specified by Bluetooth device */
+    GEOFENCE_PROXIMITY_PROVIDER_BLE,			/**< Proximity is specified by Bluetooth low energy device */
+    GEOFENCE_PROXIMITY_PROVIDER_SENSOR,			/**< Proximity is specified by Sensor */
+} geofence_proximity_provider_e;
+
+/**
+ * @brief Enumeration for geofence type.
  * @since_tizen 2.4
  */
 typedef enum {
     GEOFENCE_TYPE_GEOPOINT = 1,		/**< Geofence is specified by geospatial coordinate */
     GEOFENCE_TYPE_WIFI,				/**< Geofence is specified by Wi-Fi access point */
-    GEOFENCE_TYPE_BT,				/**< Geofence is specified by Blutetooth device */
+    GEOFENCE_TYPE_BT,				/**< Geofence is specified by Bluetooth device */
 } geofence_type_e;
 
 /**
