@@ -65,6 +65,29 @@ typedef enum {
 
 /**
  * @brief Enumeration for geofence type.
+ * @since_tizen 3.0
+ */
+typedef enum {
+    GEOFENCE_PROXIMITY_STATE_UNCERTAIN = 0,
+    GEOFENCE_PROXIMITY_STATE_FAR,
+    GEOFENCE_PROXIMITY_STATE_NEAR,
+    GEOFENCE_PROXIMITY_STATE_IMMEDIATE,
+} geofence_proximity_state_e;
+
+/**
+ * @brief Enumeration for geofence type.
+ * @since_tizen 3.0
+ */
+typedef enum {
+    GEOFENCE_PROXIMITY_PROVIDER_LOCATION = 0,
+    GEOFENCE_PROXIMITY_PROVIDER_WIFI,
+    GEOFENCE_PROXIMITY_PROVIDER_BLUETOOTH,
+    GEOFENCE_PROXIMITY_PROVIDER_BLE,
+    GEOFENCE_PROXIMITY_PROVIDER_SENSOR,
+} geofence_proximity_provider_e;
+
+/**
+ * @brief Enumeration for geofence type.
  * @since_tizen 2.4
  */
 typedef enum {

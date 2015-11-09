@@ -42,6 +42,19 @@ extern "C" {
 typedef void(*geofence_state_changed_cb)(int geofence_id, geofence_state_e state, void *user_data);
 
 /**
+ * @brief Called when a device enters or exits the given geofence.
+ * @since_tizen 3.0
+ * @param[in] geofence_id  The specified geofence id
+ * @param[in] proximity_state  The proximity state
+ * @param[in] user_data  The user data passed from callback registration function
+ * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_proximity_state_changed_cb().
+ * @see geofence_proximity_state_e
+ * @see geofence_manager_start()
+ * @see geofence_manager_set_geofence_proximity_state_changed_cb()
+ */
+typedef void(*geofence_proximity_state_changed_cb)(int geofence_id, geofence_proximity_state_e state, geofence_proximity_provider_e provider, void *user_data);
+
+/**
  * @brief Called when the some event occurs in geofence and place such as add, update, etc..
  * @details The events of public geofence is also received if there are public geofences.
  *
@@ -52,10 +65,10 @@ typedef void(*geofence_state_changed_cb)(int geofence_id, geofence_state_e state
  * @param[in] error The error code for the particular action
  * @param[in] manage The result code for the particular place and geofence management
  * @param[in] user_data The user data passed from callback registration function
- * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_state_changed_cb()
+ * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_event_cb()
  * @see geofence_manage_e
  * @see geofence_manager_start()
- * @see geofence_manager_set_geofence_state_changed_cb()
+ * @see geofence_manager_set_geofence_event_cb()
  */
 typedef void(*geofence_event_cb)(int place_id, int geofence_id, geofence_manager_error_e error, geofence_manage_e manage, void *user_data);
 
@@ -332,6 +345,31 @@ int geofence_manager_set_geofence_event_cb(geofence_manager_h manager, geofence_
  * @see geofence_event_cb()
  */
 int geofence_manager_unset_geofence_event_cb(geofence_manager_h manager);
+
+/**
+ * @brief Registers a callback function to be invoked when a response comes.
+ * @since_tizen 3.0
+ * @param[in] manager The geofence manager handle
+ * @param[in] callback The callback function to register
+ * @param[in] user_data The user data to be passed to the callback function
+ * @return 0 on success, otherwise a negative error value
+ * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
+ * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @post This function invokes geofence_proximity_state_changed_cb().
+ * @see geofence_manager_unset_geofence_proximity_state_changed_cb()
+ */
+int geofence_manager_set_geofence_proximity_state_changed_cb(geofence_manager_h manager, geofence_proximity_state_changed_cb callback, void *user_data);
+
+/**
+ * @brief Unregisters the callback function.
+ * @since_tizen 3.0
+ * @param[in] manager The geofence manager handle
+ * @return 0 on success, otherwise a negative error value
+ * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
+ * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @see geofence_manager_set_geofence_proximity_state_changed_cb()
+ */
+int geofence_manager_unset_geofence_proximity_state_changed_cb(geofence_manager_h manager);
 
 /**
  * @brief Retrieves a list of fences registered in the specified geofence manager.
