@@ -42,6 +42,21 @@ extern "C" {
 typedef void(*geofence_state_changed_cb)(int geofence_id, geofence_state_e state, void *user_data);
 
 /**
+ * @brief Called when a proximity state of device is changed.
+ * @since_tizen 3.0
+ * @param[in] geofence_id  The specified geofence id
+ * @param[in] state  The proximity state
+ * @param[in] provider  The proximity provider
+ * @param[in] user_data  The user data passed from callback registration function
+ * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_proximity_state_changed_cb().
+ * @see geofence_proximity_state_e
+ * @see geofence_proximity_provider_e
+ * @see geofence_manager_start()
+ * @see geofence_manager_set_geofence_proximity_state_changed_cb()
+ */
+typedef void(*geofence_proximity_state_changed_cb)(int geofence_id, geofence_proximity_state_e state, geofence_proximity_provider_e provider, void *user_data);
+
+/**
  * @brief Called when the some event occurs in geofence and place such as add, update, etc..
  * @details The events of public geofence is also received if there are public geofences.
  *
@@ -52,10 +67,10 @@ typedef void(*geofence_state_changed_cb)(int geofence_id, geofence_state_e state
  * @param[in] error The error code for the particular action
  * @param[in] manage The result code for the particular place and geofence management
  * @param[in] user_data The user data passed from callback registration function
- * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_state_changed_cb()
+ * @pre geofence_manager_start() will invoke this callback if you register this callback using geofence_manager_set_geofence_event_cb()
  * @see geofence_manage_e
  * @see geofence_manager_start()
- * @see geofence_manager_set_geofence_state_changed_cb()
+ * @see geofence_manager_set_geofence_event_cb()
  */
 typedef void(*geofence_event_cb)(int place_id, int geofence_id, geofence_manager_error_e error, geofence_manage_e manage, void *user_data);
 
@@ -71,7 +86,7 @@ typedef void(*geofence_event_cb)(int place_id, int geofence_id, geofence_manager
  * @pre geofence_manager_foreach_geofence_list() and geofence_manager_foreach_place_geofence_list() will invoke this callback if you specify this callback using geofence_manager_foreach_geofence_list().
  * @see geofence_manager_foreach_geofence_list()
  * @see geofence_manager_foreach_place_geofence_list()
- * @see geofence_manager_add()
+ * @see geofence_manager_add_fence()
  */
 typedef bool(*geofence_manager_fence_cb)(int geofence_id, geofence_h fence, int fence_index, int fence_cnt, void *user_data);
 
@@ -97,6 +112,7 @@ typedef bool(*geofence_manager_place_cb)(int place_id, const char *place_name, i
  * @param[out] supported  @c true if geofence service is supported, otherwise @c false
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see	geofence_manager_create()
  */
 int geofence_manager_is_supported(bool *supported);
@@ -110,11 +126,12 @@ int geofence_manager_is_supported(bool *supported);
  * @param[out] manager  A geofence manager handle to be newly created on success
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
- * @retval #GEOFENCE_MANAGER_ERROR_OUT_OF_MEMORY    Out of memory
+ * @retval #GEOFENCE_MANAGER_ERROR_OUT_OF_MEMORY Out of memory
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
- * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION	Exception occurred
+ * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @see geofence_manager_destroy()
  */
 int geofence_manager_create(geofence_manager_h *manager);
@@ -129,7 +146,8 @@ int geofence_manager_create(geofence_manager_h *manager);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
- * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION    Exception occurred
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
+ * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @pre geofence_manager_stop() is called before.
  * @see geofence_manager_create()
  * @see geofence_manager_stop()
@@ -154,6 +172,7 @@ int geofence_manager_destroy(geofence_manager_h manager);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_GEOFENCE_ACCESS_DENIED Access to specified geofence is denied
  * @see geofence_manager_stop()
@@ -177,6 +196,7 @@ int geofence_manager_start(geofence_manager_h manager, int geofence_id);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_GEOFENCE_ACCESS_DENIED Access to specified geofence is denied
@@ -195,6 +215,7 @@ int geofence_manager_stop(geofence_manager_h manager, int geofence_id);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @see   geofence_manager_update_place()
@@ -213,6 +234,7 @@ int geofence_manager_add_place(geofence_manager_h manager, const char *place_nam
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
@@ -232,6 +254,7 @@ int geofence_manager_update_place(geofence_manager_h manager, int place_id, cons
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
@@ -253,6 +276,7 @@ int geofence_manager_remove_place(geofence_manager_h manager, int place_id);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @see geofence_manager_remove_fence()
@@ -274,6 +298,7 @@ int geofence_manager_add_fence(geofence_manager_h manager, const geofence_h fenc
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_GEOFENCE_ACCESS_DENIED Access to specified geofence is denied
@@ -291,6 +316,7 @@ int geofence_manager_remove_fence(geofence_manager_h manager, int geofence_id);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @post This function invokes geofence_state_changed_cb().
  * @see geofence_manager_unset_geofence_state_changed_cb()
  * @see geofence_state_changed_cb()
@@ -304,6 +330,7 @@ int geofence_manager_set_geofence_state_changed_cb(geofence_manager_h manager, g
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_state_changed_cb()
  */
 int geofence_manager_unset_geofence_state_changed_cb(geofence_manager_h manager);
@@ -317,6 +344,7 @@ int geofence_manager_unset_geofence_state_changed_cb(geofence_manager_h manager)
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @post This function invokes geofence_event_cb().
  * @see geofence_manager_unset_geofence_event_cb()
  */
@@ -329,9 +357,38 @@ int geofence_manager_set_geofence_event_cb(geofence_manager_h manager, geofence_
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_event_cb()
  */
 int geofence_manager_unset_geofence_event_cb(geofence_manager_h manager);
+
+/**
+ * @brief Registers a callback function to be invoked when a proximity state of device is changed.
+ * @details The proximity state is measured from registered position regardless of the geofence boundary.
+ * @since_tizen 3.0
+ * @param[in] manager The geofence manager handle
+ * @param[in] callback The callback function to register
+ * @param[in] user_data The user data to be passed to the callback function
+ * @return 0 on success, otherwise a negative error value
+ * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
+ * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
+ * @post This function invokes geofence_proximity_state_changed_cb().
+ * @see geofence_manager_unset_geofence_proximity_state_changed_cb()
+ */
+int geofence_manager_set_geofence_proximity_state_changed_cb(geofence_manager_h manager, geofence_proximity_state_changed_cb callback, void *user_data);
+
+/**
+ * @brief Unregisters the callback function.
+ * @since_tizen 3.0
+ * @param[in] manager The geofence manager handle
+ * @return 0 on success, otherwise a negative error value
+ * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
+ * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
+ * @see geofence_manager_set_geofence_proximity_state_changed_cb()
+ */
+int geofence_manager_unset_geofence_proximity_state_changed_cb(geofence_manager_h manager);
 
 /**
  * @brief Retrieves a list of fences registered in the specified geofence manager.
@@ -345,10 +402,11 @@ int geofence_manager_unset_geofence_event_cb(geofence_manager_h manager);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_DATABASE Database error
  * @post This function invokes geofence_manager_fence_cb().
  * @see geofence_manager_fence_cb()
- * @see geofence_manager_add()
+ * @see geofence_manager_add_fence()
  */
 int geofence_manager_foreach_geofence_list(geofence_manager_h manager, geofence_manager_fence_cb callback, void *user_data);
 
@@ -357,6 +415,7 @@ int geofence_manager_foreach_geofence_list(geofence_manager_h manager, geofence_
  * @since_tizen 2.4
  * @privlevel public
  * @privilege %http://tizen.org/privilege/location
+ * @param[in] manager The geofence manager handle
  * @param[in] place_id The place id
  * @param[in] callback The callback function to deliver each fence of the specified place
  * @param[in] user_data The user data to be passed to the callback function
@@ -364,16 +423,17 @@ int geofence_manager_foreach_geofence_list(geofence_manager_h manager, geofence_
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_DATABASE Database error
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
  * @post This function invokes geofence_manager_fence_cb().
- * @see geofence_manager_fence_at_place_cb()
+ * @see geofence_manager_fence_cb()
  * @see geofence_manager_add_place()
  */
 int geofence_manager_foreach_place_geofence_list(geofence_manager_h manager, int place_id, geofence_manager_fence_cb callback, void *user_data);
 
 /**
- * @brief Retrieves a list of place registered in the specified geofence manager.
+ * @brief Retrieves a list of places registered in the specified geofence manager.
  * @since_tizen 2.4
  * @privlevel public
  * @privilege %http://tizen.org/privilege/location
@@ -384,6 +444,7 @@ int geofence_manager_foreach_place_geofence_list(geofence_manager_h manager, int
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_DATABASE Database error
  * @post This function invokes geofence_manager_place_cb().
  * @see geofence_manager_place_cb()
@@ -404,7 +465,8 @@ int geofence_manager_foreach_place_list(geofence_manager_h manager, geofence_man
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
- * @retval #GEOFENCE_MANAGER_ERROR_INVALI_ID
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
+ * @retval #GEOFENCE_MANAGER_ERROR_INVALID_ID Invalid geofence ID
  * @retval #GEOFENCE_MANAGER_ERROR_DATABASE Database error
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
  * @see geofence_manager_add_place()
@@ -437,6 +499,7 @@ int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, ch
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
  * @see geofence_create_bluetooth()
@@ -458,6 +521,7 @@ int geofence_create_geopoint(int place_id, double latitude, double longitude, in
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
  * @see geofence_create_geopoint()
@@ -479,6 +543,7 @@ int geofence_create_bluetooth(int place_id, const char *bssid, const char *ssid,
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @retval #GEOFENCE_MANAGER_ERROR_PLACE_ACCESS_DENIED Access to specified place is denied
  * @see geofence_create_geopoint()
@@ -496,6 +561,7 @@ int geofence_create_wifi(int place_id, const char *bssid, const char *ssid, geof
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_create_geopoint()
  * @see geofence_create_bluetooth()
  * @see geofence_create_wifi()
@@ -510,6 +576,7 @@ int geofence_destroy(geofence_h fence);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_geopoint()
  * @see geofence_get_radius()
  * @see geofence_get_bssid()
@@ -524,6 +591,7 @@ int geofence_get_type(geofence_h fence, geofence_type_e *type);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_create_geopoint()
  * @see geofence_create_bluetooth()
  * @see geofence_create_wifi()
@@ -539,6 +607,7 @@ int geofence_get_place_id(geofence_h fence, int *place_id);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument.
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_longitude()
  * @see geofence_get_radius()
  * @see geofence_get_address()
@@ -556,6 +625,7 @@ int geofence_get_latitude(geofence_h fence, double *latitude);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_latitude()
  * @see geofence_get_radius()
  * @see geofence_get_address()
@@ -574,6 +644,7 @@ int geofence_get_longitude(geofence_h fence, double *longitude);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_latitude()
  * @see geofence_get_longitude()
  * @see geofence_get_address()
@@ -591,6 +662,7 @@ int geofence_get_radius(geofence_h fence, int *radius);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_latitude()
  * @see geofence_get_longitude()
  * @see geofence_get_radius()
@@ -608,6 +680,7 @@ int geofence_get_address(geofence_h fence, char **address);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_type()
  * @see geofence_create_bluetooth()
  * @see geofence_create_wifi()
@@ -624,6 +697,7 @@ int geofence_get_bssid(geofence_h fence, char **bssid);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_get_type()
  * @see geofence_create_bluetooth()
  * @see geofence_create_wifi()
@@ -641,6 +715,7 @@ int geofence_get_ssid(geofence_h fence, char **ssid);
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
  * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_GEOFENCE_ACCESS_DENIED Access to specified geofence is denied
  * @see geofence_status_destroy()
  * @see geofence_manager_start()
@@ -655,6 +730,7 @@ int geofence_status_create(int geofence_id, geofence_status_h *status);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_status_create()
  * @see geofence_status_get_state()
  * @see geofence_status_get_duration()
@@ -669,6 +745,7 @@ int geofence_status_destroy(geofence_status_h status);
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_status_get_duration()
  */
 int geofence_status_get_state(geofence_status_h status, geofence_state_e *state);
@@ -681,6 +758,7 @@ int geofence_status_get_state(geofence_status_h status, geofence_state_e *state)
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
+ * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @see geofence_status_get_state()
  */
 int geofence_status_get_duration(geofence_status_h status, int *seconds);

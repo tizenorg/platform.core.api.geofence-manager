@@ -124,10 +124,7 @@ static void geofence_internal_get_property(GObject *object,
 	}
 }
 
-void geofence_signaling(GeofenceObject *obj,
-                        guint32 signals[LAST_SIGNAL],
-                        guint geofence_id,
-                        guint state)
+void geofence_signaling(GeofenceObject *obj, guint32 signals[LAST_SIGNAL], guint geofence_id, guint state)
 {
 	GEOFENCE_LOGD("geofence_signaling");
 
@@ -142,6 +139,17 @@ void geofence_signaling(GeofenceObject *obj,
 		GEOFENCE_LOGD("Signal emit : ZONE_OUT");
 		g_signal_emit(obj, signals[ZONE_OUT], 0, geofence_id, NULL);
 	}
+}
+
+void geofence_proximity_signaling(GeofenceObject *obj, guint32 signals[LAST_SIGNAL], guint geofence_id, guint proximity_state, guint provider)
+{
+	GEOFENCE_LOGD("geofence_proxmity_signaling");
+
+	g_return_if_fail(obj);
+	g_return_if_fail(signals);
+	g_return_if_fail(proximity_state);
+
+	g_signal_emit(obj, signals[GEOFENCE_PROXIMITY], 0, geofence_id, proximity_state, provider, NULL);
 }
 
 void geofence_event_signaling(GeofenceObject *obj,
@@ -169,6 +177,16 @@ static void _state_cb(int geofence_id, int state, gpointer userdata)
 	geofence_signaling(userdata, signals, geofence_id, state);
 }
 
+static void _proximity_cb(int geofence_id, int proximity_state, int provider, gpointer userdata)
+{
+	GEOFENCE_LOGD("_proximity_cb");
+	g_return_if_fail(userdata);
+	GeofenceInternalPrivate *priv = GET_PRIVATE(userdata);
+	g_return_if_fail(priv);
+	GEOFENCE_LOGD("geofence id [%d] proximity_state [%d]", geofence_id, proximity_state);
+	geofence_proximity_signaling(userdata, signals, geofence_id, proximity_state, provider);
+}
+
 static void _geofence_event_cb(int place_id, int geofence_id, int error, int state, gpointer userdata)
 {
 	GEOFENCE_LOGD("_geofence_event_cb");
@@ -190,7 +208,7 @@ static int geofence_internal_create(GeofenceInternal *self)
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	if (gIsCreated == 0) {
-		ret = priv->mod->ops.create(priv->mod->handler, _state_cb, _geofence_event_cb, self);
+		ret = priv->mod->ops.create(priv->mod->handler, _state_cb, _proximity_cb, _geofence_event_cb, self);
 		if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
 			GEOFENCE_LOGE("Fail to create. Error[%d]", ret);
 		}
@@ -517,6 +535,18 @@ static void geofence_internal_class_init(GeofenceInternalClass *klass)
 	                                 geofence_VOID__UINT,
 	                                 G_TYPE_NONE, 1,
 	                                 G_TYPE_UINT);
+
+	signals[GEOFENCE_PROXIMITY] = g_signal_new("geofence-proximity",
+						G_TYPE_FROM_CLASS(klass),
+						G_SIGNAL_RUN_FIRST |
+						G_SIGNAL_NO_RECURSE,
+						G_STRUCT_OFFSET(GeofenceInternalClass, geofence_event),
+						NULL, NULL,
+						g_cclosure_marshal_generic,
+						G_TYPE_NONE, 3,
+						G_TYPE_UINT,
+						G_TYPE_UINT,
+						G_TYPE_UINT);
 
 	signals[GEOFENCE_EVENT] = g_signal_new("geofence-event",
 	                                       G_TYPE_FROM_CLASS(klass),

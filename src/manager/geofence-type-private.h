@@ -37,6 +37,7 @@ typedef GObject GeofenceObject;
 typedef enum {
     _GEOFENCE_SIGNAL_ZONE_IN,
     _GEOFENCE_SIGNAL_ZONE_OUT,
+    _GEOFENCE_SIGNAL_PROXIMITY,
     _GEOFENCE_SIGNAL_EVENT,
     _GEOFENCE_SIGNAL_NUM
 } _geofence_signal_e;
@@ -47,6 +48,7 @@ typedef enum {
 typedef struct _geofence_manager_s {
 	GeofenceObject *object;
 	const void *user_cb;
+	const void *user_proximity_cb;
 	const void *user_event_cb;
 	void *user_data;
 	gulong sig_id[_GEOFENCE_SIGNAL_NUM];

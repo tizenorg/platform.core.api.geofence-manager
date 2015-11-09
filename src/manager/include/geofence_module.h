@@ -33,13 +33,15 @@ extern "C" {
  */
 typedef void (*GeofenceModCB)(int fence_id, int state, gpointer userdata);
 
+typedef void (*GeofenceModProximityCB)(int fence_id, int proximity_state, int provider, gpointer userdata);
+
 typedef void (*GeofenceModEventCB)(int place_id, int fence_id, int error, int state, gpointer userdata);
 
 /**
  * @brief This represents APIs declared in a Geofence plug-in for Geofence modules.
  */
 typedef struct {
-	int (*create)(void *handle, GeofenceModCB geofence_cb, GeofenceModEventCB geofence_event_cb, void *userdata);
+	int (*create)(void *handle, GeofenceModCB geofence_cb, GeofenceModProximityCB geofence_proximity_cb, GeofenceModEventCB geofence_event_cb, void *userdata);
 	int (*destroy)(void *handle);
 	int (*enable_service)(void *handle, int fence_id, bool enable);
 	int (*start_geofence)(void *handle, int fence_id);

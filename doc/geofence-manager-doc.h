@@ -47,7 +47,7 @@
  * The geofence type property of geofence manager (#geofence_type_e) specified the type of virtual perimeter.
  *
  * The status property describes the current state and duration of a geofence.
- * state (#geofence_state_e) can be uncertain, in, or out.
+ * State (#geofence_state_e) can be uncertain, in, or out.
  *
  * @section CAPI_GEOFENCE_MANAGER_MODULE_FEATURE Related Features
  * This API is related with the following features:\n
@@ -60,7 +60,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.mobile.native.appprogramming/html/ide_sdk_tools/feature_element.htm"><b>Feature Element</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tools/native-tools/manifest-text-editor#feature"><b>Feature Element</b>.</a>
  *
  */
 
@@ -78,9 +78,9 @@
  * Geo-fence defines a virtual perimeter for a real-world geographic area.
  * If you create a geofence, you can trigger some activities when a device enters(or exits) the geofences defined by you.
  *
- * You can create a geofence with the information of Geopoint, WiFi, or BT.
+ * You can create a geofence with the information of Geopoint, Wi-Fi, or BT.
  *
- * 1. Geopoint: Gefence is specified by cooridinates (Latitude and Longitude) and Radius\n
+ * 1. Geopoint: Geofence is specified by coordinates (Latitude and Longitude) and Radius\n
  * 2. WIFI: Geofence is specified by BSSID of Wi-Fi access point\n
  * 3. BT: Geofence is specified by Bluetooth address\n
  *
@@ -99,7 +99,7 @@
  *
  * To ensure your application is only running on the device with specific features, please define the features in your manifest file using the manifest editor in the SDK.\n
  *
- * More details on featuring your application can be found from <a href="../org.tizen.mobile.native.appprogramming/html/ide_sdk_tools/feature_element.htm"><b>Feature Element</b>.</a>
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tools/native-tools/manifest-text-editor#feature"><b>Feature Element</b>.</a>
  *
  */
 

@@ -44,6 +44,7 @@ struct _GeofenceInternalClass {
 
 	void (* zone_in)(guint geofence_id);
 	void (* zone_out)(guint geofence_id);
+	void (* geofence_proximity)(guint geofence_id, guint proximity_state, guint provider);
 	void (* geofence_event)(guint place_id, guint geofence_id, guint error, guint state);
 };
 
