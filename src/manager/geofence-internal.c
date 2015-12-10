@@ -147,7 +147,6 @@ void geofence_proximity_signaling(GeofenceObject *obj, guint32 signals[LAST_SIGN
 
 	g_return_if_fail(obj);
 	g_return_if_fail(signals);
-	g_return_if_fail(proximity_state);
 
 	g_signal_emit(obj, signals[GEOFENCE_PROXIMITY], 0, geofence_id, proximity_state, provider, NULL);
 }
