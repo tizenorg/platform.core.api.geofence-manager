@@ -25,7 +25,6 @@
 #include "geofence-log.h"
 #include "geofence.h"
 #include "geofence-ielement.h"
-#include "geofence-privacy.h"
 #include "geofence-param.h"
 #include "geofence_manager.h"
 
@@ -280,13 +279,6 @@ EXPORT_API int geofence_manager_create(geofence_manager_h *manager)
 	GEOFENCE_NULL_ARG_CHECK(manager);
 
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-	geofence_privacy_initialize();
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
 
 	ret = geofence_init();
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
@@ -342,11 +334,6 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
 	geofence_manager_unset_geofence_event_cb(manager);
 	geofence_manager_unset_geofence_state_changed_cb(manager);
 
@@ -378,7 +365,6 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 	/* destroy the hashtables */
 	g_hash_table_destroy(fence_map);
 	fence_map = NULL;
-	geofence_privacy_finalize();
 	g_list_free(tracking_list);
 	geofence_free(handle->object);
 	free(handle);
@@ -398,14 +384,8 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 	GEOFENCE_NULL_ARG_CHECK(manager);
 	GEOFENCE_CHECK_CONDITION(geofence_id > 0, GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER");
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
-        int ret = GEOFENCE_MANAGER_ERROR_NONE;
+	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-        	GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(ret);
-
-	}
 	ret = geofence_ielement_enable_service(GEOFENCE_IELEMENT(handle->object), geofence_id, enable);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
@@ -426,12 +406,6 @@ EXPORT_API int geofence_manager_start(geofence_manager_h manager, int geofence_i
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(ret);
-
-	}
 	if (__is_fence_started(geofence_id) == true) {
 		return __print_error_code(GEOFENCE_MANAGER_ERROR_ALREADY_STARTED);
 	}
@@ -455,11 +429,6 @@ EXPORT_API int geofence_manager_stop(geofence_manager_h manager, int geofence_id
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
 	if (__is_fence_started(geofence_id) == false) {
 		GEOFENCE_LOGE("Fence is not currently running.");
 		return __print_error_code(GEOFENCE_MANAGER_ERROR_EXCEPTION);
@@ -487,11 +456,6 @@ EXPORT_API int geofence_manager_add_fence(geofence_manager_h manager, geofence_h
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
-
 	ret = geofence_ielement_add(GEOFENCE_IELEMENT(handle->object), (geofence_s *) params, geofence_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
 		return __print_error_code(ret);
@@ -513,11 +477,6 @@ EXPORT_API int geofence_manager_add_place(geofence_manager_h manager, const char
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
 
 	ret = geofence_ielement_add_place(GEOFENCE_IELEMENT(handle->object), place_name, place_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
@@ -541,11 +500,6 @@ EXPORT_API int geofence_manager_update_place(geofence_manager_h manager, int pla
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
-
 	ret = geofence_ielement_update_place(GEOFENCE_IELEMENT(handle->object), place_name, place_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
 		return __print_error_code(ret);
@@ -567,11 +521,6 @@ EXPORT_API int geofence_manager_remove_fence(geofence_manager_h manager, int geo
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
-
 	ret = geofence_ielement_remove(GEOFENCE_IELEMENT(handle->object), geofence_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
 		return __print_error_code(ret);
@@ -591,11 +540,6 @@ EXPORT_API int geofence_manager_remove_place(geofence_manager_h manager, int pla
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
 
 	ret = geofence_ielement_remove_place(GEOFENCE_IELEMENT(handle->object), place_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
@@ -618,11 +562,6 @@ EXPORT_API int geofence_manager_get_place_name(geofence_manager_h manager, int p
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		return __print_error_code(ret);
-	}
 
 	ret = geofence_ielement_get_place_name(GEOFENCE_IELEMENT(handle->object), place_id, place_name);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
@@ -716,13 +655,6 @@ EXPORT_API int geofence_manager_foreach_geofence_list(geofence_manager_h manager
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
-
 	int fence_amount = 0;
 	int *fence_ids = NULL;
 	geofence_s *params = NULL;
@@ -770,13 +702,6 @@ EXPORT_API int geofence_manager_foreach_place_geofence_list(geofence_manager_h m
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
-
 	int fence_amount = 0;
 	int *fence_ids = NULL;
 	geofence_s *params = NULL;
@@ -819,13 +744,6 @@ EXPORT_API int geofence_manager_foreach_place_list(geofence_manager_h manager, g
 
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
-
-	ret = geofence_get_privacy();
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
-		GEOFENCE_LOGE("Cannot use geofence service for privacy[%d]", ret);
-		return __print_error_code(GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED);
-	}
-
 	int place_amount = 0;
 	int *place_ids = NULL;
 	place_s *params = NULL;
@@ -911,6 +829,7 @@ EXPORT_API int geofence_destroy(geofence_h fence)
 		return GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED;
 
 	GEOFENCE_NULL_ARG_CHECK(fence);
+
 	geofence_parameter_free((geofence_s *)fence);
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }

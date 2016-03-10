@@ -20,7 +20,6 @@ BuildRequires:  pkgconfig(gmodule-2.0)
 BuildRequires:  pkgconfig(capi-appfw-app-manager)
 BuildRequires:  pkgconfig(capi-appfw-package-manager)
 BuildRequires:  pkgconfig(pkgmgr-info)
-BuildRequires:  pkgconfig(privacy-manager-client)
 BuildRequires:  pkgconfig(capi-system-info)
 
 Requires(post): /sbin/ldconfig
