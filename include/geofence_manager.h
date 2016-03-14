@@ -120,8 +120,6 @@ int geofence_manager_is_supported(bool *supported);
 /**
  * @brief Creates a new geofence manager.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @remarks The manager must be released using geofence_manager_destroy().
  * @param[out] manager  A geofence manager handle to be newly created on success
  * @return 0 on success, otherwise a negative error value
@@ -139,8 +137,6 @@ int geofence_manager_create(geofence_manager_h *manager);
 /**
  * @brief Releases the geofence manager.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @param[in] manager The geofence manager handle
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
@@ -487,8 +483,6 @@ int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, ch
 /**
  * @brief Creates a geopoint type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @remarks 	The fence must be released using geofence_destroy().
  * @param[in] place_id The current place id
  * @param[in] latitude Specifies the value of latitude of geofence [-90.0 ~ 90.0] (degrees)
@@ -511,8 +505,6 @@ int geofence_create_geopoint(int place_id, double latitude, double longitude, in
 /**
  * @brief Creates a bluetooth type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @remarks 	The fence must be released using geofence_destroy().
  * @param[in] place_id The current place id
  * @param[in] bssid Specifies the value of BSSID of BT MAC address
@@ -533,8 +525,6 @@ int geofence_create_bluetooth(int place_id, const char *bssid, const char *ssid,
 /**
  * @brief Creates a Wi-Fi type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @remarks 	The fence must be released using geofence_destroy().
  * @param[in] place_id The current place id
  * @param[in] bssid Specifies the value of BSSID of Wi-Fi MAC address
@@ -555,8 +545,6 @@ int geofence_create_wifi(int place_id, const char *bssid, const char *ssid, geof
 /**
  * @brief Releases the geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
  * @param[in] fence The geofence handle
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
