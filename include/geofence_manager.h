@@ -120,15 +120,13 @@ int geofence_manager_is_supported(bool *supported);
 /**
  * @brief Creates a new geofence manager.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
- * @remarks The manager must be released using geofence_manager_destroy().
+ * @remarks The manager must be released using geofence_manager_destroy().\n
+ *          Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[out] manager  A geofence manager handle to be newly created on success
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_OUT_OF_MEMORY Out of memory
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
- * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_INITIALIZED Not initialized
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
@@ -139,13 +137,11 @@ int geofence_manager_create(geofence_manager_h *manager);
 /**
  * @brief Releases the geofence manager.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
+ * @remarks Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[in] manager The geofence manager handle
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
  * @retval #GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER Illegal argument
- * @retval #GEOFENCE_MANAGER_ERROR_PERMISSION_DENIED The application does not have the privilege to call this function
  * @retval #GEOFENCE_MANAGER_ERROR_NOT_SUPPORTED Not supported
  * @retval #GEOFENCE_MANAGER_ERROR_EXCEPTION Exception occurred
  * @pre geofence_manager_stop() is called before.
@@ -487,9 +483,8 @@ int geofence_manager_get_place_name(geofence_manager_h manager, int place_id, ch
 /**
  * @brief Creates a geopoint type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
- * @remarks 	The fence must be released using geofence_destroy().
+ * @remarks 	The fence must be released using geofence_destroy().\n
+ *              Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[in] place_id The current place id
  * @param[in] latitude Specifies the value of latitude of geofence [-90.0 ~ 90.0] (degrees)
  * @param[in] longitude Specifies the value of longitude of geofence [-180.0 ~ 180.0] (degrees)
@@ -511,9 +506,8 @@ int geofence_create_geopoint(int place_id, double latitude, double longitude, in
 /**
  * @brief Creates a bluetooth type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
- * @remarks 	The fence must be released using geofence_destroy().
+ * @remarks 	The fence must be released using geofence_destroy().\n
+ *              Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[in] place_id The current place id
  * @param[in] bssid Specifies the value of BSSID of BT MAC address
  * @param[in] ssid Specifies the value of SSID of BT Device
@@ -533,9 +527,8 @@ int geofence_create_bluetooth(int place_id, const char *bssid, const char *ssid,
 /**
  * @brief Creates a Wi-Fi type of new geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
- * @remarks 	The fence must be released using geofence_destroy().
+ * @remarks 	The fence must be released using geofence_destroy().\n
+                Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[in] place_id The current place id
  * @param[in] bssid Specifies the value of BSSID of Wi-Fi MAC address
  * @param[in] ssid Specifies the value of SSID of Wi-Fi Device
@@ -555,8 +548,7 @@ int geofence_create_wifi(int place_id, const char *bssid, const char *ssid, geof
 /**
  * @brief Releases the geofence.
  * @since_tizen 2.4
- * @privlevel public
- * @privilege %http://tizen.org/privilege/location
+ * @remarks   Since 3.0, http://tizen.org/privilege/location privilege is not required.
  * @param[in] fence The geofence handle
  * @return 0 on success, otherwise a negative error value
  * @retval #GEOFENCE_MANAGER_ERROR_NONE Successful
