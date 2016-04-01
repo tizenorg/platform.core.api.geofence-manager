@@ -27,10 +27,10 @@
 * Internal Macros
 */
 
-#define GEOFENCE_LOGD(fmt,args...) LOGD(fmt, ##args)
-#define GEOFENCE_LOGW(fmt,args...) LOGW(fmt, ##args)
-#define GEOFENCE_LOGI(fmt,args...) LOGI(fmt, ##args)
-#define GEOFENCE_LOGE(fmt,args...) LOGE(fmt, ##args)
+#define GEOFENCE_LOGD(fmt, args...) LOGD(fmt, ##args)
+#define GEOFENCE_LOGW(fmt, args...) LOGW(fmt, ##args)
+#define GEOFENCE_LOGI(fmt, args...) LOGI(fmt, ##args)
+#define GEOFENCE_LOGE(fmt, args...) LOGE(fmt, ##args)
 
 #define GEOFENCE_CHECK_CONDITION(condition, error, msg)	\
 	do { \
@@ -55,7 +55,7 @@ extern "C" {
 
 
 #define GEOFENCE_NULL_ARG_CHECK(arg)	\
-	GEOFENCE_CHECK_CONDITION((arg != NULL),GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER,"GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER") \
+	GEOFENCE_CHECK_CONDITION((arg != NULL), GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER, "GEOFENCE_MANAGER_ERROR_INVALID_PARAMETER") \
 	 
 int __print_error_code(int code);
 

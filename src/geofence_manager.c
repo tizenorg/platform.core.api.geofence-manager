@@ -103,30 +103,30 @@ void __handle_action(int place_id, int geofence_id, geofence_manager_error_e err
 	}
 
 	switch (action) {
-		case GEOFENCE_MANAGE_FENCE_STARTED: {
-				geofence_info_s *fence_info = (geofence_info_s *)malloc(sizeof(geofence_info_s));
-				if (fence_info == NULL)
-					break;
-				fence_info->info = NULL;
-				fence_info->state = GEOFENCE_STATE_UNCERTAIN;
-				fence_info->last_updated_time = (g_get_real_time() / 1000000);
-			g_hash_table_insert(fence_map, GINT_TO_POINTER(geofence_id), (gpointer)fence_info);
-				/* Inserting the fence in the tracking list */
-			tracking_list = g_list_append(tracking_list, GINT_TO_POINTER(geofence_id));
+	case GEOFENCE_MANAGE_FENCE_STARTED: {
+			geofence_info_s *fence_info = (geofence_info_s *)malloc(sizeof(geofence_info_s));
+			if (fence_info == NULL)
+				break;
+			fence_info->info = NULL;
+			fence_info->state = GEOFENCE_STATE_UNCERTAIN;
+			fence_info->last_updated_time = (g_get_real_time() / 1000000);
+		g_hash_table_insert(fence_map, GINT_TO_POINTER(geofence_id), (gpointer)fence_info);
+			/* Inserting the fence in the tracking list */
+		tracking_list = g_list_append(tracking_list, GINT_TO_POINTER(geofence_id));
+		}
+		break;
+	case GEOFENCE_MANAGE_FENCE_STOPPED: {
+		geofence_info_s *info = (geofence_info_s *)g_hash_table_lookup(fence_map, GINT_TO_POINTER(geofence_id));
+			if (info != NULL) {
+			g_hash_table_remove(fence_map, GINT_TO_POINTER(geofence_id));
+				free(info);
 			}
-			break;
-		case GEOFENCE_MANAGE_FENCE_STOPPED: {
-			geofence_info_s *info = (geofence_info_s *)g_hash_table_lookup(fence_map, GINT_TO_POINTER(geofence_id));
-				if (info != NULL) {
-				g_hash_table_remove(fence_map, GINT_TO_POINTER(geofence_id));
-					free(info);
-				}
-				/* Removing the fence in the tracking list */
-			tracking_list = g_list_remove(tracking_list, GINT_TO_POINTER(geofence_id));
-			}
-			break;
-		default:
-			break;
+			/* Removing the fence in the tracking list */
+		tracking_list = g_list_remove(tracking_list, GINT_TO_POINTER(geofence_id));
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -306,9 +306,8 @@ EXPORT_API int geofence_manager_create(geofence_manager_h *manager)
 			handle->sig_id[_GEOFENCE_SIGNAL_PROXIMITY] = g_signal_connect(handle->object, "geofence-proximity", G_CALLBACK(__cb_fence_proximity), handle);
 
 		ret = geofence_ielement_create(GEOFENCE_IELEMENT(handle->object));
-		if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+		if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 			return __print_error_code(GEOFENCE_MANAGER_ERROR_EXCEPTION);
-		}
 		/* Initialize the hashmaps to store the fence and place info */
 		fence_map = g_hash_table_new(g_direct_hash, g_direct_equal);
 		if (fence_map == NULL)
@@ -358,9 +357,8 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 	}
 
 	ret = geofence_ielement_destroy(GEOFENCE_IELEMENT(handle->object));
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(GEOFENCE_MANAGER_ERROR_EXCEPTION);
-	}
 
 	/* destroy the hashtables */
 	g_hash_table_destroy(fence_map);
@@ -406,9 +404,8 @@ EXPORT_API int geofence_manager_start(geofence_manager_h manager, int geofence_i
 	geofence_manager_s *handle = (geofence_manager_s *) manager;
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
-	if (__is_fence_started(geofence_id) == true) {
+	if (__is_fence_started(geofence_id) == true)
 		return __print_error_code(GEOFENCE_MANAGER_ERROR_ALREADY_STARTED);
-	}
 	ret = geofence_ielement_start(GEOFENCE_IELEMENT(handle->object), geofence_id);
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
@@ -434,11 +431,9 @@ EXPORT_API int geofence_manager_stop(geofence_manager_h manager, int geofence_id
 		return __print_error_code(GEOFENCE_MANAGER_ERROR_EXCEPTION);
 	}
 	ret = geofence_ielement_stop(GEOFENCE_IELEMENT(handle->object), geofence_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) GEOFENCE_LOGD("Fail to stop. Error [%d]", ret);
-
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
+
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
 
@@ -457,9 +452,8 @@ EXPORT_API int geofence_manager_add_fence(geofence_manager_h manager, geofence_h
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_add(GEOFENCE_IELEMENT(handle->object), (geofence_s *) params, geofence_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
@@ -479,9 +473,8 @@ EXPORT_API int geofence_manager_add_place(geofence_manager_h manager, const char
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_add_place(GEOFENCE_IELEMENT(handle->object), place_name, place_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
@@ -501,9 +494,8 @@ EXPORT_API int geofence_manager_update_place(geofence_manager_h manager, int pla
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_update_place(GEOFENCE_IELEMENT(handle->object), place_name, place_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
@@ -522,9 +514,9 @@ EXPORT_API int geofence_manager_remove_fence(geofence_manager_h manager, int geo
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_remove(GEOFENCE_IELEMENT(handle->object), geofence_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
+
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
 
@@ -542,9 +534,8 @@ EXPORT_API int geofence_manager_remove_place(geofence_manager_h manager, int pla
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_remove_place(GEOFENCE_IELEMENT(handle->object), place_id);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
@@ -564,9 +555,9 @@ EXPORT_API int geofence_manager_get_place_name(geofence_manager_h manager, int p
 	int ret = GEOFENCE_MANAGER_ERROR_NONE;
 
 	ret = geofence_ielement_get_place_name(GEOFENCE_IELEMENT(handle->object), place_id, place_name);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
+
 	return GEOFENCE_MANAGER_ERROR_NONE;
 }
 
@@ -660,9 +651,8 @@ EXPORT_API int geofence_manager_foreach_geofence_list(geofence_manager_h manager
 	geofence_s *params = NULL;
 
 	ret = geofence_ielement_get_fence_list(GEOFENCE_IELEMENT(handle->object), -1, &fence_amount, &fence_ids, &params);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	if (fence_amount == 0) {
 		if (callback)
@@ -678,9 +668,8 @@ EXPORT_API int geofence_manager_foreach_geofence_list(geofence_manager_h manager
 	}
 
 	int iterations = fence_amount;
-	while (iterations-- > 0) {
+	while (iterations-- > 0)
 		geofence_parameter_free((geofence_s *)(params++));
-	}
 
 	g_slice_free1(sizeof(int)*fence_amount, fence_ids);
 
@@ -708,9 +697,8 @@ EXPORT_API int geofence_manager_foreach_place_geofence_list(geofence_manager_h m
 
 	GEOFENCE_LOGD("place_id: %d", place_id);
 	ret = geofence_ielement_get_fence_list(GEOFENCE_IELEMENT(handle->object), place_id, &fence_amount, &fence_ids, &params);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
 
 	if (fence_amount == 0) {
 		callback(0, NULL, 0, 0, user_data);
@@ -722,9 +710,8 @@ EXPORT_API int geofence_manager_foreach_place_geofence_list(geofence_manager_h m
 		GEOFENCE_LOGD("Fence id: %d, lat: %lf, lon: %lf, rad: %d, address: %s, bssid: %s, ssid: %s", fence_ids[i], params[i].latitude, params[i].longitude, params[i].radius, params[i].address, params[i].bssid, params[i].ssid);
 	}
 	int iterations = fence_amount;
-	while (iterations-- > 0) {
+	while (iterations-- > 0)
 		geofence_parameter_free((geofence_s *)(params++));
-	}
 
 	g_slice_free1(sizeof(int)*fence_amount, fence_ids);
 
@@ -749,23 +736,21 @@ EXPORT_API int geofence_manager_foreach_place_list(geofence_manager_h manager, g
 	place_s *params = NULL;
 
 	ret = geofence_ielement_get_place_list(GEOFENCE_IELEMENT(handle->object), &place_amount, &place_ids, &params);
-	if (ret != GEOFENCE_MANAGER_ERROR_NONE) {
+	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
 		return __print_error_code(ret);
-	}
+
 	if (place_amount == 0) {
 		callback(0, NULL, 0, 0, user_data);
 		return GEOFENCE_MANAGER_ERROR_NONE;
 	}
 
 	int i = 0;
-	for (i = 0; i < place_amount; i++) {
+	for (i = 0; i < place_amount; i++)
 		callback(place_ids[i], ((const place_s *)(params + i))->place_name, (i + 1), place_amount, user_data);
-	}
 
 	int iterations = place_amount;
-	while (iterations-- > 0) {
+	while (iterations-- > 0)
 		g_slice_free(place_s, (params++));
-	}
 
 	g_slice_free1(sizeof(int)*place_amount, place_ids);
 

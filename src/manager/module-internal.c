@@ -131,9 +131,8 @@ static void mod_free(gpointer mod, const char *module_name)
 
 	if (0 == g_strcmp0(module_name, "geofence")) {
 		GeofenceInternalMod *_mod = (GeofenceInternalMod *) mod;
-		if (_mod->shutdown && _mod->handler) {
+		if (_mod->shutdown && _mod->handler)
 			_mod->shutdown(_mod->handler);
-		}
 		_mod->handler = NULL;
 		_mod->init = NULL;
 		_mod->shutdown = NULL;
@@ -149,9 +148,8 @@ static gboolean mod_is_supported(const char *module_name)
 {
 	GMod *gmod = NULL;
 	gmod = gmod_new(module_name, FALSE);
-	if (!gmod) {
+	if (!gmod)
 		return FALSE;
-	}
 	gmod_free(gmod);
 
 	return TRUE;
@@ -181,15 +179,15 @@ GeofenceInternalMod *module_new(const char *module_name)
 	char name[256];
 
 	gpointer mod = NULL;
-	if (0 >= g_snprintf(name, 256, "%s", module_name)) {
+	if (0 >= g_snprintf(name, 256, "%s", module_name))
 		GEOFENCE_LOGW("module name(%s) is wrong", name);
-	}
 	mod = mod_new(name);
-	if (mod) {
+
+	if (mod)
 		GEOFENCE_LOGW("module (%s) open success", name);
-	} else {
+	else
 		GEOFENCE_LOGW("module (%s) open failed", name);
-	}
+
 	return mod;
 }
 
@@ -205,11 +203,10 @@ gboolean module_is_supported(const char *module_name)
 	char name[256] = { 0, };
 
 	for (index = -1; index < MAX_MODULE_INDEX; index++) {
-		if (index >= 0) {
+		if (index >= 0)
 			g_snprintf(name, 256, "%s%d", module_name, index);
-		} else {
+		else
 			g_snprintf(name, 256, "%s", module_name);
-		}
 
 		ret = mod_is_supported(name);
 		if (ret == TRUE) {
