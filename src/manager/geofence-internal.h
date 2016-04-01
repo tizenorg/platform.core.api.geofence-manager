@@ -25,12 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define GEOFENCE_TYPE_INTERNAL					(geofence_internal_get_type ())
-#define GEOFENCE_INTERNAL(obj)					(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEOFENCE_TYPE_INTERNAL, GeofenceInternal))
-#define GEOFENCE_IS_INTERNAL(obj)				(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEOFENCE_TYPE_INTERNAL))
-#define GEOFENCE_INTERNAL_CLASS(klass)			(G_TYPE_CHECK_CLASS_CAST ((klass), GEOFENCE_TYPE_INTERNAL, GeofenceInternalClass))
-#define GEOFENCE_IS_INTERNAL_CLASS(klass)		(G_TYPE_CHECK_CLASS_TYPE ((klass), GEOFENCE_TYPE_INTERNAL))
-#define GEOFENCE_INTERNAL_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEOFENCE_TYPE_INTERNAL, GeofenceInternalClass))
+#define GEOFENCE_TYPE_INTERNAL					(geofence_internal_get_type())
+#define GEOFENCE_INTERNAL(obj)					(G_TYPE_CHECK_INSTANCE_CAST((obj), GEOFENCE_TYPE_INTERNAL, GeofenceInternal))
+#define GEOFENCE_IS_INTERNAL(obj)				(G_TYPE_CHECK_INSTANCE_TYPE((obj), GEOFENCE_TYPE_INTERNAL))
+#define GEOFENCE_INTERNAL_CLASS(klass)			(G_TYPE_CHECK_CLASS_CAST((klass), GEOFENCE_TYPE_INTERNAL, GeofenceInternalClass))
+#define GEOFENCE_IS_INTERNAL_CLASS(klass)		(G_TYPE_CHECK_CLASS_TYPE((klass), GEOFENCE_TYPE_INTERNAL))
+#define GEOFENCE_INTERNAL_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS((obj), GEOFENCE_TYPE_INTERNAL, GeofenceInternalClass))
 
 typedef struct _GeofenceInternal 	GeofenceInternal;
 typedef struct _GeofenceInternalClass	GeofenceInternalClass;
@@ -42,10 +42,10 @@ struct _GeofenceInternal {
 struct _GeofenceInternalClass {
 	GObjectClass parent_class;
 
-	void (* zone_in)(guint geofence_id);
-	void (* zone_out)(guint geofence_id);
-	void (* geofence_proximity)(guint geofence_id, guint proximity_state, guint provider);
-	void (* geofence_event)(guint place_id, guint geofence_id, guint error, guint state);
+	void (*zone_in)(guint geofence_id);
+	void (*zone_out)(guint geofence_id);
+	void (*geofence_proximity)(guint geofence_id, guint proximity_state, guint provider);
+	void (*geofence_event)(guint place_id, guint geofence_id, guint error, guint state);
 };
 
 /*typedef void (*service_status_cb) (int status, void *user_data); */

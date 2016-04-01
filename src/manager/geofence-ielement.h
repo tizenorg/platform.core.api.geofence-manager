@@ -34,10 +34,10 @@ enum {
     LAST_SIGNAL
 };
 
-#define GEOFENCE_TYPE_IELEMENT                  (geofence_ielement_get_type ())
-#define GEOFENCE_IELEMENT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEOFENCE_TYPE_IELEMENT, GeofenceIElement))
-#define GEOFENCE_IS_IELEMENT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEOFENCE_TYPE_IELEMENT))
-#define GEOFENCE_IELEMENT_GET_INTERFACE(obj)    (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GEOFENCE_TYPE_IELEMENT, GeofenceIElementInterface))
+#define GEOFENCE_TYPE_IELEMENT                  (geofence_ielement_get_type())
+#define GEOFENCE_IELEMENT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST((obj), GEOFENCE_TYPE_IELEMENT, GeofenceIElement))
+#define GEOFENCE_IS_IELEMENT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE((obj), GEOFENCE_TYPE_IELEMENT))
+#define GEOFENCE_IELEMENT_GET_INTERFACE(obj)    (G_TYPE_INSTANCE_GET_INTERFACE((obj), GEOFENCE_TYPE_IELEMENT, GeofenceIElementInterface))
 
 typedef struct _GeofenceIElement          GeofenceIElement;
 typedef struct _GeofenceIElementInterface GeofenceIElementInterface;
