@@ -66,9 +66,8 @@ gboolean geofence_is_supported(void)
 
 	gboolean supported = FALSE;
 
-	if (module_is_supported("geofence")) {
+	if (module_is_supported("geofence"))
 		supported = TRUE;
-	}
 
 	return supported;
 }

@@ -1,7 +1,7 @@
 #sbs-git:slp/api/geofence-manager capi-geofence-manager 0.1.0 d1ee09a32e8bc0e9ed48ece37c641a7393c086c5
 Name:       capi-geofence-manager
 Summary:    A Geofence Manager library in Tizen Native API
-Version:    0.3.2
+Version:    0.3.3
 Release:    1
 Group:      Location/Libraries
 License:    Apache-2.0

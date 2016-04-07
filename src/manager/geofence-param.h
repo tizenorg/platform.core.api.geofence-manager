@@ -21,7 +21,7 @@
 G_BEGIN_DECLS
 
 GType geofence_parameter_get_type(void);
-#define GEOFENCE_PRAMETER (geofence_parameter_get_type ())
+#define GEOFENCE_PRAMETER (geofence_parameter_get_type())
 
 geofence_s *geofence_parameter_new(gint place_id, guint type, gdouble latitude, gdouble longitude, guint radius, const gchar *address, const gchar *bssid, const gchar *ssid);
 geofence_s *geofence_parameter_copy(const geofence_s *params);
