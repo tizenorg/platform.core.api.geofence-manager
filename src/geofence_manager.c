@@ -355,6 +355,14 @@ EXPORT_API int geofence_manager_destroy(geofence_manager_h manager)
 		g_signal_handler_disconnect(handle->object, handle->sig_id[_GEOFENCE_SIGNAL_ZONE_OUT]);
 		handle->sig_id[_GEOFENCE_SIGNAL_ZONE_OUT] = 0;
 	}
+	if (handle->sig_id[_GEOFENCE_SIGNAL_EVENT]) {
+		g_signal_handler_disconnect(handle->object, handle->sig_id[_GEOFENCE_SIGNAL_EVENT]);
+		handle->sig_id[_GEOFENCE_SIGNAL_EVENT] = 0;
+	}
+	if (handle->sig_id[_GEOFENCE_SIGNAL_PROXIMITY]) {
+		g_signal_handler_disconnect(handle->object, handle->sig_id[_GEOFENCE_SIGNAL_PROXIMITY]);
+		handle->sig_id[_GEOFENCE_SIGNAL_PROXIMITY] = 0;
+	}
 
 	ret = geofence_ielement_destroy(GEOFENCE_IELEMENT(handle->object));
 	if (ret != GEOFENCE_MANAGER_ERROR_NONE)
